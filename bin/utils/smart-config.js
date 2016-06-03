@@ -52,19 +52,3 @@ const config = {
 };
 
 module.exports = config;
-
-/*
-
-	├── /build/                              # 代码打包目录
-    ├── /node_modules/                      # node依赖包
-    ├── /src/                               # 源码目录
-    │   ├── /pages/                         # 页面
-    │   ├── /components/                    # 公用组件
-    │   ├── /assets/                        # 图片、字体资源
-    │   ├── /scss/                          # 公用样式    
-    │   └── /js/                         		# 公用JS模块
-    ├── pepper.config.js                    # pepper的配置文件
-    ├── index.template.html                 # 首页HTML模版, 可选
-    └── package.json
-
-*/

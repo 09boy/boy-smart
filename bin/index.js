@@ -12,10 +12,15 @@ const interAactiveHelpDelegate = function(answers){
 
 commander(smartConfig,function(commandObj){
 
+	smartConfig.PORT = commandObj.port;
+	smartConfig.HOST = commandObj.host;
+
 	const name = commandObj.name;
 	if(commandObj.commanderLength === 0){
-		interActive.help(interAactiveHelpDelegate);
+		interActive.help(interAactiveHelpDelegate,smartConfig);
 		return;
 	}
+
 	task(smartConfig)[name]();
 });
+

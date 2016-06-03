@@ -6,34 +6,11 @@ const server = require('../server/server.js');
 require('shelljs/global');
 
 
-// start test release pro page component 
-
-/*
-check node_modules --» true --» execute task ---|___ start
-									|                    ^        |
-									◊                    |        |___ test
-								false                  |        |
-									|                    |        |___ dev  
-									◊                    |        |
-									|                    |        |___ release
-					execute npm install          |        |
-									|                    |        |___ page
-									|                    |        |
-									|                    |        |___ component
-									◊                    |
-		   create project directories      |
-		   						|										 |
-		   						◊____________________|						
-*/
-
-
-// var isInitializeSmart = false;
-
 var smartConfig,
 		structrueObj,
 		smartName,
 		ROOT_PATH;
-// use webpack in node_modules/.bin/webpack
+
 var webpack,
 		mocha;
 
@@ -62,14 +39,13 @@ const initialization = function(){
 	createPage('index');
 };
 
-const copyHideConfigFile = function(){
-	cp(path.join(__dirname,'..','smart-install/.babelrc'),ROOT_PATH);
-	cp(path.join(__dirname,'..','smart-install/.gitignore'),ROOT_PATH);
-};
+// const copyHideConfigFile = function(){
+// 	cp(path.join(__dirname,'..','smart-install/.babelrc'),ROOT_PATH);
+// 	cp(path.join(__dirname,'..','smart-install/.gitignore'),ROOT_PATH);
+// };
 
 const checkInitialize = function(){
 
-	//test('-e',ROOT_PATH + '/bin')
 	const hasPackageFile = test('-e',ROOT_PATH + '/package.json');
 	if(!hasPackageFile){
 		console.log('installing project dependences package...');
@@ -78,8 +54,6 @@ const checkInitialize = function(){
 	}else{
 		//console.log('merge package');
 	}
-		//copyHideConfigFile();
-		//fs.writeFile(path.join(ROOT_PATH,'node_modules',smartName,'bin/smart-install','install.json'),JSON.stringify({isInstall:true}),'utf8');
 	if(!test('-e',ROOT_PATH + '/' + structrueObj.SRC_DIR.NAME)){ return false;}
 	return true;
 };
@@ -100,7 +74,6 @@ const createPage = function(name){
 const executeWebpack = function(){
 
 	exec(webpack + ' --config ' + path.join(__dirname, '..', 'webpack', 'config.js') + ' --progress --colors --inline');
-
 	// test : mocha & chai
 	// mocha + ' --config ' + path.join(__dirname, '..', 'webpack', 'config.js');
 };
@@ -144,7 +117,7 @@ const task = {
 		run();
 	},
 	// 创建新页面
-	page: function(MODE){
+	page: function(){
 
 		console.log('task: page');
 		initialization();
@@ -157,6 +130,12 @@ const task = {
 
 		console.log('task: component');
 		initialization();
+	},
+	//升级
+	upgrade: function(){
+
+		console.log('upgrading...');
+		exec('npm install ' + smartConfig.NAME + ' -g');
 	}
 };
 
