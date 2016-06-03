@@ -1,0 +1,19 @@
+{
+  "name": "boy-smart-front-end",
+  "version": "1.1.0",
+  "description": "front-end: webpack development tool",
+  "keywords": [
+    "webpack",
+    "react"
+  ],
+  "author": "your name",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "react": "^15.0.2",
+    "react-dom": "^15.0.2",
+    "react-redux": "^4.4.5",
+    "redbox-react": "^1.2.4",
+    "redux": "^3.5.2"
+  }
+}
