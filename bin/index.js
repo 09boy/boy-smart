@@ -7,7 +7,7 @@ const interActive = require('./utils/interactive.js');
 
 const interAactiveHelpDelegate = function(answers){
 	console.log(JSON.stringify(answers,null,' '));
-	task(smartConfig)[answers.task]();
+	task(smartConfig)[answers.task](answers);
 };
 
 commander(smartConfig,function(commandObj){

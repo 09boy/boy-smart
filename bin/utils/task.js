@@ -102,26 +102,26 @@ const task = {
 		process.env.MODE = 'test';
 		run();
 	},
-	// 预发布
-	dev: function(){
+	// 内测
+	// devel: function(){
 
-		console.log('task: dev');
-		process.env.MODE = 'dev';
-		run();
-	},
-	// 打包 ｜ 生产环境
-	release: function(){
+	// 	console.log('task: dev');
+	// 	process.env.MODE = 'dev';
+	// 	run();
+	// },
+	// 打包 ｜ 内测，公测，生产
+	release: function(answers){
 
-		console.log('task: release');
-		process.env.MODE = 'production';
+		console.log('task: ' + answers.pack);
+		process.env.MODE =  answers.pack;//'production';
 		run();
 	},
 	// 创建新页面
-	page: function(){
+	page: function(answers){
 
-		console.log('task: page');
+		console.log('task: page',answers);
 		initialization();
-		const pagesData = process.argv.splice(3);
+		const pagesData = !answers ? process.argv.splice(3) : answers.pageNames;
 		pagesData.map(createPage);
 		server.restart(smartConfig);
 	},

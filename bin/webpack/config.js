@@ -183,7 +183,7 @@ const configObject = function(smartConfig){
 		common.output.filename = '[name]-[hash].js';
 		common.output.chunkFilename = '[name]-[chunkhash].js';
 
-		if(envMode === 'dev'){
+		if(envMode === 'devel'){
 		// 不压缩
 		}else if(isProduction){
 			

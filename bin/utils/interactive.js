@@ -4,31 +4,48 @@ const inquirer = require('inquirer');
 
 require('shelljs/global');
 
-var smartConfig;
+var smartConfig,
+		pageNames;
+
+const mapNewPage = function(names){
+
+	const ROOT_PATH = smartConfig.ROOT_PATH;
+	const srcStructure = smartConfig.PROJECT_STRUCTURE.SRC_DIR;
+
+	const pages = ls(path.join(ROOT_PATH,srcStructure.NAME,srcStructure.PAGES_DIR));
+	names = names.trim().split(' ');
+
+	if(names.length == 1 ) { return pages.indexOf(names[0]) > -1 ? true : false;}
+
+	pages.forEach(function(name){
+
+		for(var i = 0; i < names.length; i++){
+			if(name === names[i]) {
+				//console.log(name,' was existing ');
+				names.splice(i,1);
+				continue;
+			}
+		}
+	});
+
+	if(!names.length) { return true}
+
+	pageNames = names;
+	return false;
+};
 
 function isExist(names){
 
 	if(names === '') return false;
 
-	const ROOT_PATH = smartConfig.ROOT_PATH;
-	const srcStructure = smartConfig.PROJECT_STRUCTURE.SRC_DIR;
-
-	const pagesPath = path.join(ROOT_PATH,srcStructure,srcStructure.PAGES_DIR);
-	const pages = ls(pagesPath);
-
-
-	names = names.trim().split(' ');
-
-	
-
-	try{
-		names.map(function(name){
-			fs.statSync(path.join(ROOT_PATH,srcStructure.NAME,srcStructure.PAGES_DIR,name))
-		});
+	// try{
+	// 	names.map(function(name){
+	// 		fs.statSync(path.join(ROOT_PATH,srcStructure.NAME,srcStructure.PAGES_DIR,name))
+	// 	});
 		
-	}catch(e){ return false;}
+	// }catch(e){ return false;}
 
-  return true;
+	return mapNewPage(names);
 }
 
 const task = {
@@ -36,10 +53,31 @@ const task = {
 	test: function(){
 
 	},
-	release: function(){
-		console.log('hahahah');
+	release: function(callback){
+		
+		inquirer
+			.prompt([{
+				type: 'list',
+				name: 'pack',
+				message: '打包环境',
+				choices: [{
+					name: '内测',
+					value: 'devel'
+				},{
+					name: '公测',
+					value: 'public'
+				},{
+					name: '正式',
+					value: 'production'
+				}]
+			}])
+			.then(function(answers){
+				//console.log(answers)
+				answers.task = 'release';
+				callback(answers);
+			});
 	},
-	page: function(){
+	page: function(callback){
 
 		inquirer
 			.prompt([{
@@ -48,19 +86,17 @@ const task = {
         message: '请输入页面的名称 ｜ 多个页面名称用空格隔开: [英文]',
         validate: function(value) {
 
-        	console.log('validate::',isExist(value),value);
-          if(isExist(value)) {
-              return "该文件已存在, 换一个名字吧";
-          }
-          if(!value && !value.length) {
-              return "Smart 需要您提供页面名称";
-          }
+          if(isExist(value)) { return "文件已存在"; }
+          if(!value && !value.length) { return '输入页面名称'; }
           return true;
         }
       }])
       .then(function(answers){
-      	console.log('create page',answers.pageNames.trim());
-        //task.page(answers.pageNames);
+
+      	answers.pageNames = !pageNames ? answers.pageNames.split(' ') : pageNames;
+      	answers.task = 'page';
+      	//console.log('create pages',answers.pageNames);
+        callback(answers);
       });
 	},
 	component: function(){
@@ -108,22 +144,17 @@ const options = [
 
 const help = function(callback,_smartConfig){
 
-	inquirer.prompt(options).then(callback);
+	//inquirer.prompt(options).then(callback);
 
-	//smartConfig = _smartConfig;
+	smartConfig = _smartConfig;
 	/*callback = typeof callback === 'function' ? callback : function(answers){
 		console.log(JSON.stringify(answers,null, '  '));
 	};*/
 
-	// inquirer.prompt(options).then(function(answers){
-	// 	//console.log(answers);
-	// 	task[answers.task](callback);
-	// 	/*if(answers.task !== 'release'){
-	// 		callback(answers);
-	// 	}else{
-			
-	// 	}*/
-	// });
+	inquirer.prompt(options).then(function(answers){
+		//console.log(answers);
+		task[answers.task](callback);
+	});
 };
 
 module.exports = {help:help};
