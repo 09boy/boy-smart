@@ -5,6 +5,7 @@ const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const proxy = require('http-proxy-middleware');
+const Mock = require('mockjs');
 
 const webpackConfig = require('../webpack/config.js');
 const app = express();
@@ -13,7 +14,7 @@ require('shelljs/global');
 
 var runPid;
 
-const mock = function(projectConfig){ 
+const mockAndProxy = function(projectConfig){ 
 
   const mockPath = path.join(projectConfig.ROOT_PATH,'mock.config.js');
   try{ fs.statSync(mockPath); }catch(e){ return; }
@@ -27,6 +28,13 @@ const mock = function(projectConfig){
   mock.map(function(obj){
     if(obj.proxy){
       app.use(proxy(obj.context,obj.options));
+    }else{
+
+    	const method = obj.method || 'get';
+      app[method](obj.path, function(req, res) {
+          var data = Mock.mock(obj.data);
+          res.send(data);
+      });
     }
   });
 };
@@ -53,7 +61,7 @@ const serverObject = {
 			app.use(webpackHotMiddleware(compiler));
 
 			//Mock
-    	mock(projectConfig);
+    	mockAndProxy(projectConfig);
 
 		}else if(process.env.MODE === 'test'){
 			console.log(process.env.MODE,' server');
@@ -65,6 +73,8 @@ const serverObject = {
     
 		app.get(serverRoute,function(request,response){
 			//response.sendFile(path.join(projectConfig.ROOT_PATH,filePath/*,'index.html'*/));
+
+			console.log('wo cao niam ');
 			response.sendFile(path.join(projectConfig.ROOT_PATH,filePath));
 		});
 
