@@ -73,9 +73,9 @@ const createPage = function(name){
 
 const executeWebpack = function(){
 
-	exec(webpack + ' --config ' + path.join(__dirname, '..', 'webpack', 'config.js') + ' --progress --colors --inline');
-	// test : mocha & chai
-	// mocha + ' --config ' + path.join(__dirname, '..', 'webpack', 'config.js');
+	console.log(process.env.MODE,'  executeWebpack');
+	process.env.MODE !== 'test' ? exec(webpack + ' --config ' + path.join(__dirname, '..', 'webpack', 'config.js') + ' --progress --colors --inline')
+															: exec(mocha + ' ' + path.join(ROOT_PATH,structrueObj.SRC_DIR.NAME)+'/**/*.test.js  --watch');
 };
 
 const run = function(){
@@ -102,40 +102,38 @@ const task = {
 		process.env.MODE = 'test';
 		run();
 	},
-	// 内测
-	// devel: function(){
-
-	// 	console.log('task: dev');
-	// 	process.env.MODE = 'dev';
-	// 	run();
-	// },
 	// 打包 ｜ 内测，公测，生产
 	release: function(answers){
 
-		console.log('task: ' + answers.pack);
-		process.env.MODE =  answers.pack;//'production';
+		var pack;
+		if(!answers){
+			const packs = ['devel','public','production'];
+			pack = process.argv.splice(3)[0];
+			if(packs.indexOf(pack) < 0) {
+				console.log('Argument Error: devel or public or production');
+				return;
+			}
+		}else {
+			pack = answers.pack;
+		}
+		console.log('task: ' + pack);
+		process.env.MODE =  pack;//'production';
 		run();
 	},
 	// 创建新页面
 	page: function(answers){
 
-		console.log('task: page',answers);
 		initialization();
 		const pagesData = !answers ? process.argv.splice(3) : answers.pageNames;
 		pagesData.map(createPage);
-		server.restart(smartConfig);
+		console.log('task: page',createPage);
+		// server.restart(smartConfig);
 	},
 	// 创建新组建
 	component: function(){
-
-		console.log('task: component');
-		initialization();
-	},
-	//升级
-	upgrade: function(){
-
-		console.log('upgrading...');
-		exec('npm install ' + smartConfig.NAME + ' -g');
+		console.log('开发中...');
+		//console.log('task: component');
+		//initialization();
 	}
 };
 
@@ -146,7 +144,7 @@ const taskObject = function(_smartConfig){
 	ROOT_PATH = smartConfig.ROOT_PATH;
 	smartName = smartConfig.NAME;
 	webpack = path.join(__dirname, '..', '..' ,'node_modules', '.bin', 'webpack');
-	mochaf = path.join(__dirname, '..', '..', 'node_modules', '.bin','mocha');
+	mocha = path.join(__dirname, '..', '..', 'node_modules', '.bin','mocha');
 	return task;
 };
 

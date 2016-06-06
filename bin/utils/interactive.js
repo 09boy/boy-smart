@@ -7,6 +7,11 @@ require('shelljs/global');
 var smartConfig,
 		pageNames;
 
+
+/**
+ * @param names <String>
+ * *.多个名称用一个空格隔开
+ */
 const mapNewPage = function(names){
 
 	const ROOT_PATH = smartConfig.ROOT_PATH;
@@ -34,7 +39,7 @@ const mapNewPage = function(names){
 	return false;
 };
 
-function isExist(names){
+const isExist = function (names){
 
 	if(names === '') return false;
 
@@ -46,11 +51,76 @@ function isExist(names){
 	// }catch(e){ return false;}
 
 	return mapNewPage(names);
-}
+};
+
+/**
+ * @param -P | --port <Number>
+ * @param -H | --host <String>
+ * 注意：简写区分大小写（为了和 cli 保持一致）; 先参后值，参和值之间用一个空格隔开
+ * 无参数，使用默认 port & host
+ * 参数名无效，同上
+ * 参数值无效，重新设置
+ */
+const checkPortAndHost = function(value){
+
+	value = value.trim();
+	if(value === '') return true;
+
+	const values = value.split(' ');
+	const p = values.indexOf('-P');
+	const port = values.indexOf('--port');
+	const h = values.indexOf('-H');
+	const host = values.indexOf('--host');
+
+	if(p < 0 && port < 0 && h < 0 && host<0){
+		console.log('  无效参数，启动并用默认值!');
+		return true;
+	}
+	if(p > -1 || port >-1){
+		const _p = p > -1 ? values[p+1] : values[port+1];
+		if(isNaN(_p) || (_p.length !== 4)) {
+			console.log('  Argument Error:: port 是一个4位的数字!');
+			return false;
+		}
+		smartConfig.PORT = _p;
+	}
+
+	if(h > -1 || host > -1){
+		const _h = h > -1 ? values[h+1] : values[host+1];
+		if(!_h) {
+			console.log('  Argument Error:: host 无效的值!');
+			return false
+		}
+		smartConfig.HOST = _h;
+	}
+
+	return true;
+};
+
+const setPortHost = function(callback,message,task,pack){
+
+	inquirer
+		.prompt([{
+			type: 'input',
+			name: 'task',
+			message: message || '端口,主机设置 <-P,-H> [default port: ' + smartConfig.PORT + ', host: ' + smartConfig.HOST + ']',
+			validate: checkPortAndHost
+		}])
+	  .then(function(answers){
+	  	if(pack) { answers.pack = pack;}
+	  	answers.task = task;
+	  	console.log('start',answers,pack);
+	  	callback(answers);
+	  });
+};
 
 const task = {
 
-	test: function(){
+	start: function(callback){
+
+		setPortHost(callback,null,'start');
+	},
+	test: function(callback){
 
 	},
 	release: function(callback){
@@ -59,7 +129,7 @@ const task = {
 			.prompt([{
 				type: 'list',
 				name: 'pack',
-				message: '打包环境',
+				message: '选择打包类型',
 				choices: [{
 					name: '内测',
 					value: 'devel'
@@ -72,9 +142,8 @@ const task = {
 				}]
 			}])
 			.then(function(answers){
-				//console.log(answers)
-				answers.task = 'release';
-				callback(answers);
+				// console.log(answers)
+				setPortHost(callback,null,'release',answers.pack);
 			});
 	},
 	page: function(callback){
@@ -83,7 +152,7 @@ const task = {
 			.prompt([{
         type: 'input',
         name: 'pageNames',
-        message: '请输入页面的名称 ｜ 多个页面名称用空格隔开: [英文]',
+        message: '输入页面名称 <多个名称用空格隔开>: [英文]',
         validate: function(value) {
 
           if(isExist(value)) { return "文件已存在"; }
@@ -95,19 +164,19 @@ const task = {
 
       	answers.pageNames = !pageNames ? answers.pageNames.split(' ') : pageNames;
       	answers.task = 'page';
-      	//console.log('create pages',answers.pageNames);
+      	console.log('create pages',answers.pageNames);
         callback(answers);
       });
 	},
-	component: function(){
-
+	component: function(callback){
+		callback({task: 'component'});
 	}
 };
 
 const options = [
 	{
 		type: 'list',
-		message: '选择需要的操作选项',
+		message: '你要干神么?',
 		name: 'task',
 		choices: [
 			{
@@ -118,10 +187,6 @@ const options = [
 				name: '单元测试',
 				value: 'test'
 			},
-			/*{
-				name: '内测环境',
-				value: 'dev'
-			},*/
 			{
 				name: '项目打包',
 				value: 'release'
@@ -133,26 +198,15 @@ const options = [
 			{
 				name: '新建组件',
 				value: 'component'
-			}/*,
-			{
-				name: '升    级',
-				value: 'upgrade'
-			}*/
+			}
 		]
 	}
 ];
 
 const help = function(callback,_smartConfig){
 
-	//inquirer.prompt(options).then(callback);
-
 	smartConfig = _smartConfig;
-	/*callback = typeof callback === 'function' ? callback : function(answers){
-		console.log(JSON.stringify(answers,null, '  '));
-	};*/
-
 	inquirer.prompt(options).then(function(answers){
-		//console.log(answers);
 		task[answers.task](callback);
 	});
 };

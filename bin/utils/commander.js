@@ -2,8 +2,7 @@ const program = require('commander');
 
 const commandLines = [{name: 'start',description: 'Start local server. development env'},
 											{name: 'test',description: 'Start local server. test code with mocha and chai'},
-											{name: 'dev <dev-host>',description: 'Start local server.'},
-											{name: 'release <dev-host>',description: 'deplory'},
+											{name: 'release <devel-or-public-or-production>',description: 'deplory'},
 											{name: 'page <page-name>',description: 'create html-page'},
 											{name: 'component <component-name>',description: 'create React-component'},
 										 ];
@@ -25,7 +24,7 @@ const createCommanders = function(data,callback){
 				if(argsLen > 1){
 					
 					const testFind = program.args[1];
-					if( testFind && typeof testFind.name === 'function' && (testFind.name() === 'page' || testFind.name() === 'component')){ name = testFind.name(); }else{
+					if( testFind && typeof testFind.name === 'function' && (testFind.name() !== 'start' || testFind.name() !== 'test')){ name = testFind.name(); }else{
 						console.log('not support parse multiple commander lines.');
 						return;
 					}
