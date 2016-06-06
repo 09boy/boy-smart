@@ -100,7 +100,7 @@ const task = {
 
 		console.log('task: test');
 		process.env.MODE = 'test';
-		run();
+		//run();
 	},
 	// 打包 ｜ 内测，公测，生产
 	release: function(answers){

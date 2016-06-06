@@ -121,7 +121,7 @@ const task = {
 		setPortHost(callback,null,'start');
 	},
 	test: function(callback){
-
+		callback({task:'test'});
 	},
 	release: function(callback){
 		

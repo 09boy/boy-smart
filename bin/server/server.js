@@ -13,20 +13,20 @@ require('shelljs/global');
 
 var runPid;
 
-const mock = function(projectConfig){
+const mock = function(projectConfig){ 
 
   const mockPath = path.join(projectConfig.ROOT_PATH,'mock.config.js');
   try{ fs.statSync(mockPath); }catch(e){ return; }
 
   const mock = require(mockPath);
-  if(typeof mock !== 'array'){
+  if(!(mock instanceof Array)){
     console.log('must be Array\n');
     return;
   }
 
   mock.map(function(obj){
     if(obj.proxy){
-      app.use('/api',proxy({target:'http://www.example.org',changeOrigin: true}));
+      app.use(proxy(obj.context,obj.options));
     }
   });
 };
@@ -51,6 +51,10 @@ const serverObject = {
 			}));
 
 			app.use(webpackHotMiddleware(compiler));
+
+			//Mock
+    	mock(projectConfig);
+
 		}else if(process.env.MODE === 'test'){
 			console.log(process.env.MODE,' server');
 
@@ -59,15 +63,12 @@ const serverObject = {
 
     app.use(express.static(path.join(projectConfig.ROOT_PATH,filePath)));
     
-		//Mock
-    mock(projectConfig);
-
 		app.get(serverRoute,function(request,response){
 			//response.sendFile(path.join(projectConfig.ROOT_PATH,filePath/*,'index.html'*/));
 			response.sendFile(path.join(projectConfig.ROOT_PATH,filePath));
 		});
 
-		console.log('listening http://' + projectConfig.HOST + ':' + projectConfig.PORT);
+		// console.log('listening http://' + projectConfig.HOST + ':' + projectConfig.PORT);
 		app.listen(projectConfig.PORT,projectConfig.HOST);
 		exec('open http://' + projectConfig.HOST + ':' + projectConfig.PORT);
 	}
