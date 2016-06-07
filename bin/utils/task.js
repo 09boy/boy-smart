@@ -73,9 +73,8 @@ const createPage = function(name){
 
 const executeWebpack = function(){
 
-	console.log(process.env.MODE,'  executeWebpack');
 	process.env.MODE !== 'test' ? exec(webpack + ' --config ' + path.join(__dirname, '..', 'webpack', 'config.js') + ' --progress --colors --inline')
-															: exec(mocha + ' ' + path.join(ROOT_PATH,structrueObj.SRC_DIR.NAME)+'/**/*.test.js  --watch');
+															: exec(mocha + ' ' + path.join(ROOT_PATH,structrueObj.SRC_DIR.TEST_DIR)+'/**/*.test.js  --watch');
 };
 
 const run = function(){

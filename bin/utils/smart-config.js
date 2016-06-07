@@ -18,9 +18,9 @@ const config = {
 
   API: {												// API ENTRY
 
-  	START: '',									// local api
-  	DEV: '', 										// dev api
-  	RELEASE: ''									// online api 
+  	START: '',									// local api  [ develop.example.com ]
+  	DEV: '', 										// dev api    [ dev.example.com ]
+  	RELEASE: ''									// online api [ example.com ]
   },
 
 	PROJECT_STRUCTURE: {
@@ -39,14 +39,16 @@ const config = {
 
 				FONTS_DIR: 'fonts',
 
-				JS_DIR: 'js',						// 公共 js 模块
+				JS_DIR: 'js',								// 公共 js 模块
 
-				SASS_DIR: 'sass',				// 公共 css 模块
+				SASS_DIR: 'sass',						// 公共 css 模块
 			},
 
-			PAGES_DIR: 'pages',				// 页面
+			PAGES_DIR: 'pages',						// 页面目录
 			
-			COMPONENTS_DIR: 'components'  // 组件目录
+			COMPONENTS_DIR: 'components', // 组件目录
+
+			TEST_DIR: 'test'              // 单元测试目录
 		}
 	}
 };

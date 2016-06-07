@@ -7,7 +7,6 @@ require('shelljs/global');
 var smartConfig,
 		pageNames;
 
-
 /**
  * @param names <String>
  * *.多个名称用一个空格隔开
@@ -121,6 +120,7 @@ const task = {
 		setPortHost(callback,null,'start');
 	},
 	test: function(callback){
+
 		callback({task:'test'});
 	},
 	release: function(callback){
@@ -169,8 +169,13 @@ const task = {
       });
 	},
 	component: function(callback){
+
 		callback({task: 'component'});
-	}
+	}/*,
+	'structrue-config': function(){
+		
+		require('./project.structure.config.js');
+	}*/
 };
 
 const options = [
@@ -198,7 +203,11 @@ const options = [
 			{
 				name: '新建组件',
 				value: 'component'
-			}
+			}/*,
+			{
+				name: '开发配置',
+				value: 'structrue-config'
+			}*/
 		]
 	}
 ];

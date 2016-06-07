@@ -26,12 +26,11 @@ const mockAndProxy = function(projectConfig){
   }
 
   mock.map(function(obj){
-    if(obj.proxy){
+    if(obj.proxy === 'true'){
       app.use(proxy(obj.context,obj.options));
     }else{
 
-    	const method = obj.method || 'get';
-      app[method](obj.path, function(req, res) {
+      app[obj.method || 'get'](obj.context, function(req, res) {
           var data = Mock.mock(obj.data);
           res.send(data);
       });
@@ -48,6 +47,7 @@ const serverObject = {
 				isStart = process.env.MODE === 'development';
 		// development mode
 		if(isStart){
+
 			const config = webpackConfig(projectConfig);
 			const compiler = webpack(config);
 
@@ -73,8 +73,6 @@ const serverObject = {
     
 		app.get(serverRoute,function(request,response){
 			//response.sendFile(path.join(projectConfig.ROOT_PATH,filePath/*,'index.html'*/));
-
-			console.log('wo cao niam ');
 			response.sendFile(path.join(projectConfig.ROOT_PATH,filePath));
 		});
 

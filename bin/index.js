@@ -23,4 +23,3 @@ commander(smartConfig,function(commandObj){
 	
 	task(smartConfig)[name]();
 });
-

@@ -20,6 +20,7 @@ require('shelljs/global');
 // http://stackoverflow.com/questions/32385219/mocha-tests-dont-run-with-webpack-and-mocha-loader/32386750#32386750
 // https://www.npmjs.com/package/mocha-webpack
 
+
 //Generate HTML
 const getHTMLTemplate = function(obj){
 		return new HtmlWebpackPlugin({
@@ -57,6 +58,7 @@ const configObject = function(smartConfig){
 	const BUILD_PATH  = path.join(ROOT_PATH,STRUCTURE.BUILD_DIR);
 
 	const envMode = process.env.MODE;
+
 	const isDevelopment = envMode === 'development';
 	const isProduction = envMode === 'production';
 
@@ -176,16 +178,13 @@ const configObject = function(smartConfig){
 
 	if(isDevelopment){
 		plugins.push(new webpack.HotModuleReplacementPlugin());
-
 	}else{
 
-		process.env.NODE_ENV = 'test';
+		// process.env.NODE_ENV = 'test';
 		common.output.filename = '[name]-[hash].js';
 		common.output.chunkFilename = '[name]-[chunkhash].js';
 
-		if(envMode === 'devel'){
-		// 不压缩
-		}else if(isProduction){
+		if(envMode !== 'test'){
 			
 			process.env.NODE_ENV = 'production';
 
