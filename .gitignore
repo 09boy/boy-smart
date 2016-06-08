@@ -31,7 +31,7 @@ src
 mochawesome-reports
 
 # test
-test
+#test
 
 # Dependency directory
 # npm packages
