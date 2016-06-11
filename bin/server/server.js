@@ -16,6 +16,7 @@ var runPid;
 
 const mockAndProxy = function(projectConfig){ 
 
+	return;
   const mockPath = path.join(projectConfig.ROOT_PATH,'mock.config.js');
   try{ fs.statSync(mockPath); }catch(e){ return; }
 
@@ -40,7 +41,7 @@ const mockAndProxy = function(projectConfig){
 
 const serverObject = {
 	start: function(projectConfig){
-	
+		
 		console.log('env.MODE::: ', process.env.MODE);
 		var serverRoute = '/',
 				filePath = projectConfig.PROJECT_STRUCTURE.BUILD_DIR;
@@ -76,7 +77,7 @@ const serverObject = {
 			response.sendFile(path.join(projectConfig.ROOT_PATH,filePath));
 		});
 
-		// console.log('listening http://' + projectConfig.HOST + ':' + projectConfig.PORT);
+		console.log('listening http://' + projectConfig.HOST + ':' + projectConfig.PORT);
 		app.listen(projectConfig.PORT,projectConfig.HOST);
 		exec('open http://' + projectConfig.HOST + ':' + projectConfig.PORT);
 	}
