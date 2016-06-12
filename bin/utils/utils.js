@@ -1,161 +1,75 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-
-
 /**
-	* copy
-	* @param target < object > 
-	* @param deep < boolean >  default is true unless you set a value of boolean false
-	* return new object || undefined
-	*/
-const copyObject = function(target,deep){
+ * copy an object
+ * @param {Object} target
+ * @param {Boolean} deep    true is deep copy; default is true unless you set value of boolean false. ('false' not false)
+ * return object
+ */
+const copy = function(target,deep){
 
-	if(typeof target !== 'object') {
-		console.log('Arguemnt Error:: <target is object>');
-		return;
+	if(!arguments.length || typeof target !== 'object') {
+		throw new Error('copy(target,deep)->Argument Error: target is an object type.');
 	}
 
-	deep = typeof deep === 'boolean' ? deep : true;
+	deep = deep !== false ? true : false; 
 
-	var o = target instanceof Array ? [] : {};
-	var value;
+	var o = target instanceof Array ? [] : {},
+			value;
+
 	for(var k in target){
 		value = target[k];
-		o[k] = deep ? typeof value !== 'object' ? value : copyObject(value,deep) : value;
+		o[k] = deep ? typeof value !== 'object' || value.test !== undefined ? value : copy(value,deep) : value;
 	}
+
 	return o;
 };
 
+exports.copy = copy;
 
-exports.copyObject = copyObject;
 
 /**
-	* merge object
-	* @param source < object > 
-	* @param target < object >
-	*/
+ * merge object; filter same key and value if array arguments
+ * @param {Object}
+ * @param {Object}
+ * return undefined
+ */
 const merge = function(source,target){
 
+	if(arguments.length < 2) {
+		throw new Error('merge(source,target)->Argument Error: Both source and target are must be have.');
+	}
+
 	if(typeof source !== 'object') {
-		console.log('Arguemnt Error:: <source is object>');
-		return;
+		throw new Error('merge(source,target)->Argument Error: source is an object type.');
 	}
 
-	const isSourceArr = source instanceof Array;
-
-	if(typeof target !== 'object' || (target instanceof Array) !== isSourceArr) {
-		console.log('Arguemnt Error:: <source and target are must be same type(Object)>');
-		return;
+	if(typeof target !== 'object') {
+		throw new Error('merge(source,target)->Argument Error: target is an object type.');
 	}
 
-	var value,data,sourceValue;
+	const sourceType = source instanceof Array;
+	const targetType = target instanceof Array;
+
+	if(sourceType !== targetType) {
+		throw new Error('merge(source,target)->Argument Error: Both source and target muste be same object type.');
+	}
+
+	var tValue;
 	for(var k in target){
-		value = target[k];
-		sourceValue = source[k];
-		data = value !== 'object' ? value : copyObject(value);
+		tValue = target[k];
+		tValue = typeof tValue !== 'object' ? tValue : copy(tValue);
 
-		if(!isSourceArr){
-			
-			if(source[k] && source[k] instanceof Array && data instanceof Array){
-				merge(sourceValue,data);
-			}else{
-				source[k] = data;
-			}
-
-
-		}else{
-
-			if(sourceValue instanceof Array){
-
-				for(var n in data){
-					const child_data = data[n];
-					const index = sourceValue.indexOf(child_data);
-					if(index > -1){
-						sourceValue[index] = child_data;
-					}else{
-						sourceValue.push(child_data);
-					}
-				}
-
-			}else{
-				source[k] = data;
-			}
-
+		if(!sourceType){
+			source[k] = tValue;
+		}else if(source.indexOf(tValue) < 0){
+			source.push(tValue);
 		}
 	}
 };
 
-/**
- * override same value
- * @param source <array>
- * @param target <array>
- */
-const filterArray = function(source,target){
-
-	if(!(source instanceof Array)) { return;}
-	if(!(target instanceof Array)) { return;} 
-
-	for(var k in target){
-		var data = target[k];
-		var index = source.indexOf(data);
-		if(index > -1){ source[index] = data; }
-		else{ source.push(data);}
-	}
-};
-
-exports.filterArray = filterArray;
-
-
-const sourceObj = { name: 'Beijing', cities: ['ChaoYang','HaiDian','WangJing'] };
-const targetObj = { name: 'Tianjing', codes: [ 1001, 1002] };
-const sourceArr = [ 1, 'string' , false, {object:'type-object'}, ['type-array'] ];
-const targetArr = [ true ];
-const emptyObj = {};
-const emptyArr = [];
-
-merge(emptyObj,targetObj);
-
 exports.merge = merge;
 
-/*
-	{ options:
-   { template: '/Users/minqin/personal/repository/boy-smart/node_modules/html-webpack-plugin/default_index.ejs',
-     filename: 'index.html',
-     hash: false,
-     inject: true,
-     compile: true,
-     favicon: false,
-     minify: false,
-     cache: true,
-     showErrors: true,
-     chunks: 'all',
-     excludeChunks: [],
-     title: 'Webpack App',
-     xhtml: false } }
 
-*/
-
-
-
-//Generate HTML
-exports.getHTMLTemplate = function(option){
-
-	option = option instanceof Object ? option : {chunks:[],filename:'index.html',title:'SPA | Single page application',keywords:'SEO keywords',description:'SEO website\'s description'};
-
-
-	// return new HtmlWebpackPlugin({
-	// 	chunks: option.chunks,
-	// 	filename: option.filename,
-	// 	title: option.title,
-	// 	template: option.template,
-	// 	// inject: 'body'
-	// 	keywords: option.keywords,
-	// 	description: option.description,
-	// 	viewport: option.viewport,	
-	// 	favicon: option.favicon
-	// });
-};
-
+// resolve module path
 exports.resolvePath = function (target){
 
 	var queryStr = '',

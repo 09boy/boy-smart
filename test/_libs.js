@@ -1,6 +1,5 @@
 module.exports = {
-	smartConfigFactory: require('../bin/utils/smart-config.js'),
-	webpackConfigFactory: require('../bin/webpack/config.js'),
-	tasksFactory: require('../bin/utils/task.js'),
-	utilsFactory: require('../bin/utils/utils.js')
+	//webpackConfigFactory: require('../bin/webpack/config.js'),
+	smartConfig: require('../bin/utils/smart-config.js'),
+	utils: require('../bin/utils/utils.js')
 };

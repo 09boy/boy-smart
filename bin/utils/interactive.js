@@ -129,7 +129,7 @@ const task = {
 			.prompt([{
 				type: 'list',
 				name: 'pack',
-				message: '选择打包类型',
+				message: '选择打包环境',
 				choices: [{
 					name: '内测',
 					value: 'devel'
