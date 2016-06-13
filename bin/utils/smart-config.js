@@ -9,6 +9,8 @@ const config = {
 
 	ESLINT: true,
 
+	BASE64_LIMIT_SIZE: '8192',    // use base64 <= 8kb
+
   STATIC: { 										//CDN domain, or just leave it blank if not using
 
   	START: '',									// here use relative path							

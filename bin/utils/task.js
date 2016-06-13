@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 const server = require('../server/server.js');
+//const merge = require('./utils.js').merge;
 
 require('shelljs/global');
 
@@ -37,12 +38,8 @@ const initialization = function(){
 	console.log('initialization project directories...');
 	createProjectStructure(structrueObj);
 	createPage('index');
+	createMockConfigFile();
 };
-
-// const copyHideConfigFile = function(){
-// 	cp(path.join(__dirname,'..','smart-install/.babelrc'),ROOT_PATH);
-// 	cp(path.join(__dirname,'..','smart-install/.gitignore'),ROOT_PATH);
-// };
 
 const checkInitialize = function(){
 
@@ -71,10 +68,16 @@ const createPage = function(name){
 	}
 };
 
+const createMockConfigFile = function(){
+	if(!test('-e',path.join(ROOT_PATH,'mock.config.js'))){
+		cp(path.join(__dirname,'..','templates/mock.config.template.js'),ROOT_PATH);
+		mv(ROOT_PATH + '/mock.config.template.js', ROOT_PATH + '/mock.config.js');
+	}
+};
+
 const executeWebpack = function(){
 
-	process.env.MODE !== 'test' ? exec(webpack + ' --config ' + path.join(__dirname, '..', 'webpack', 'config.js') + ' --progress --colors --inline')
-															: exec(mocha + ' ' + path.join(ROOT_PATH,structrueObj.SRC_DIR.TEST_DIR)+'/**/*.test.js  --watch');
+	exec(webpack + ' --config ' + path.join(__dirname, '..', 'webpack', 'config.js') + ' --progress --colors --inline');
 };
 
 const run = function(){
@@ -99,7 +102,7 @@ const task = {
 
 		console.log('task: test');
 		process.env.MODE = 'test';
-		//run();
+		exec(mocha + ' ' + path.join(ROOT_PATH,structrueObj.SRC_DIR.NAME,structrueObj.SRC_DIR.TEST_DIR) + ' --recursive --colors --reporter mochawesome') // --watch --reporter-options reportDir=
 	},
 	// 打包 ｜ 内测，公测，生产
 	release: function(answers){
@@ -125,7 +128,7 @@ const task = {
 		initialization();
 		const pagesData = !answers ? process.argv.splice(3) : answers.pageNames;
 		pagesData.map(createPage);
-		console.log('task: page',createPage);
+		console.log('task: page');
 		// server.restart(smartConfig);
 	},
 	// 创建新组建

@@ -10,7 +10,6 @@ const resolvePath = require('../utils/utils.js').resolvePath;
 
 require('shelljs/global');
 
-
 const getConfig = function(smartConfig){
 
 	const STRUCTURE = smartConfig.PROJECT_STRUCTURE;
@@ -50,54 +49,8 @@ const getConfig = function(smartConfig){
 	const loaders = [
 		{ test: /\.css/, loader: extractCSS.extract(['css','style']), include: ENTRY_PATH, exclude: /node_modules/},
 		{ test: /\.scss/, loader: extractCSS.extract(['css','sass']), include: ENTRY_PATH, exclude: /node_modules/},
-		{ test: /\.(png|jpg|jpeg|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=\.]+)?$/, loader: 'url-loader?limit=1000', include: ENTRY_PATH, exclude: /node_modules/ }
+		{ test: /\.(png|jpg|jpeg|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=\.]+)?$/, loader: 'url-loader?limit=' + smartConfig.BASE64_LIMIT_SIZE + '&name=[path][name].[ext]?[hash]', include: ENTRY_PATH, exclude: /node_modules/ }
 	];
-
-	/*
-	
-	{
-                test: /\.css$/,
-                include: [path.resolve(CWD, config.base, config.scss)],// extract style import from scss to separate css files
-                loader: 'style!css!autoprefixer'
-            }, {
-                test: /\.less$/,
-                include: [path.resolve(CWD, config.base, config.scss)],
-                loader: 'style!css!autoprefixer!less?sourceMap'
-            }, {
-                test: /\.scss$/,
-                include: [path.resolve(CWD, config.base, config.scss)],// extract style import from scss to separate css files
-                loader: 'style!css!autoprefixer!sass?sourceMap&includePaths[]=' + path.resolve(CWD, 'node_modules') + 
-                    '&includePaths[]=' + path.resolve(CWD, 'node_modules') + 
-                    '&includePaths[]=' + path.resolve(CWD, config.base)
-            }, {
-                test: /\.css$/,
-                exclude: [path.resolve(CWD, config.base, config.scss)],
-                loader: 'style!css' + (config.css_modules ? '?modules&importLoaders=1&localIdentName=[name]__[local]__[hash:base64:8]' : '') + '!autoprefixer'
-            }, {
-                test: /\.less$/,
-                exclude: [path.resolve(CWD, config.base, config.scss)],
-                loader: 'style!css' + (config.css_modules ? '?modules&importLoaders=1&localIdentName=[name]__[local]__[hash:base64:8]' : '') + '!autoprefixer!less?sourceMap'
-            }, {
-                test: /\.scss$/,
-                exclude: [path.resolve(CWD, config.base, config.scss)],// pack other styles into JS and wrapped within style at runtime
-                loader: 'style!css' + (config.css_modules ? '?modules&importLoaders=1&localIdentName=[name]__[local]__[hash:base64:8]': '') + '!autoprefixer!sass?sourceMap' +
-                    '&includePaths[]=' + path.resolve(CWD, 'node_modules') + 
-                    '&includePaths[]=' + path.resolve(CWD, config.base)
-            }, {
-                test: /\.(png|jpg|svg|gif|jpeg)$/,
-                // < 20k, otherwise file-loader is used auto
-                loader: 'url?limit=' + config.base64_image_limit + '&name=' + config.assets + '/images/[name]-[hash:8].[ext]'//20k
-            }, {
-                test: /\.(ttf|eot|svg|woff[1-9]?)$/,
-                loader: "file?name=" + config.assets + "/fonts/[name]-[hash:8].[ext]"
-            }, {
-                test: /\.json$/,
-                loader: "json"
-            }]
-
-
-
-	*/
 
 	merge(loaders, envConfig.loaders(ENTRY_PATH,resolvePath));
 
@@ -123,7 +76,7 @@ const getConfig = function(smartConfig){
 		
 			return entrys;
 		}
-
+		
 		// plugins.push(getHTMLTemplate({chunks:['bundle'],filename: 'index.html',template: path.join(__dirname,'..','templates','html','index.template.ejs')}));
 		// entrys.bundle = ['webpack-hot-middleware/client?reload=true','babel-polyfill',ENTRY_PATH];
 		// return entrys;

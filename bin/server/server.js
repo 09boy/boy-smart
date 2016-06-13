@@ -16,7 +16,6 @@ var runPid;
 
 const mockAndProxy = function(projectConfig){ 
 
-	return;
   const mockPath = path.join(projectConfig.ROOT_PATH,'mock.config.js');
   try{ fs.statSync(mockPath); }catch(e){ return; }
 
@@ -25,7 +24,7 @@ const mockAndProxy = function(projectConfig){
     console.log('must be Array\n');
     return;
   }
-
+  
   mock.map(function(obj){
     if(obj.proxy === 'true'){
       app.use(proxy(obj.context,obj.options));
@@ -61,14 +60,10 @@ const serverObject = {
 
 			app.use(webpackHotMiddleware(compiler));
 
-			//Mock
-    	mockAndProxy(projectConfig);
-
-		}else if(process.env.MODE === 'test'){
-			console.log(process.env.MODE,' server');
-
-      //app.use(webpackDevMiddleware(webpack(require('../webpack/mocha.config.js'))))
 		}
+
+		//Mock
+    mockAndProxy(projectConfig);
 
     app.use(express.static(path.join(projectConfig.ROOT_PATH,filePath)));
     

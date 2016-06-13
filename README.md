@@ -56,45 +56,39 @@ cd 命令进入你工作的目录。这里用我的目录举例 /Users/xx-name/p
 添加 --host 或 [简写] -H 参数设置domain, 默认 127.0.0.1
 
 
-##### 1. start  ［开发环境，调试代码，不压缩代码，单元测试］
+##### 1. start  ［开发环境，调试代码，不压缩代码］
+
+启动一个默认端口为8080本地服务器作为开发环境 | 或者启动一个 9090 本地服务器
 
 ```bash
  		$ smart start | smart start -P 9090
 ```
 
-启动一个默认端口为8080本地服务器作为开发环境 | 或者启动一个 9090 本地服务器
 
-##### 2. test
+##### 2. test 代码单元测试 [ mocha & chai ]
 
 ```bash
  		$ smart test
 ```
 
-启动一个本地服务器 & 作为代码单元测试 [ mocha & chai ]
 
-##### 3. dev
+##### 3. release devel | public | production
 
-```bash
- 		$ smart dev
-```
-
-启动一个本地服务器 & 内测环境调试
-
-##### 4. release
+启动一个本地服务器 & 打包资源（合并，压缩），用于内测／公测／生产环境
 
 ```bash
- 		$ smart release
+ 		$ smart release production
 ```
 
-启动一个本地服务器 & 打包资源（合并，压缩），用于生产环境
 
-##### 5. page <page-name>
+##### 4. page <page-name>
+
+创建一个 [ about ] 页面
 
 ```bash
  		$ smart page about
 ```
 
-创建一个 [ about ] 页面
 
 创建多个页面[ about, contact, category ...],如下:
 
@@ -102,7 +96,7 @@ cd 命令进入你工作的目录。这里用我的目录举例 /Users/xx-name/p
  		$ smart page about contact category 
 ```
 
-##### 6. component <component-name>
+##### 5. component <component-name>
 
 ```bash
  		$ smart component HeaderComponent
@@ -124,8 +118,29 @@ cd 命令进入你工作的目录。这里用我的目录举例 /Users/xx-name/p
 
 ## Structure [ 目录结构 ]
 
-as soon...
 
-### [![issues]](https://github.com/09boy/boy-smart/issues)
+```
+    |-- build                                           ＃ 打包目录
+    |
+    |-- mochawesome-reports                             ＃ 单元测试报告网页目录
+    |
+    |-- src                                             ＃ 开发目录
+    	|
+        |-- assets                                      ＃ 静态资源目录
+        |   |
+        |   |-- fonts                                   ＃ 字体目录
+        |   |
+        |   |-- images                                  ＃ 图片目录
+        |   |
+        |   |-- js                                      ＃ js common 目录
+        |   |
+        |   |-- sass                                    ＃ sass 目录
+        |-- components                                  ＃ 组件目录
+        |
+        |-- pages                                       ＃ 页面目录
+        |
+        |-- test                                        ＃ 单元测试目录
+```
 
 
+#### Issues: <https://github.com/09boy/boy-smart/issues>
