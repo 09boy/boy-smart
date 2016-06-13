@@ -1,15 +1,14 @@
 const program = require('commander');
 
-const commandLines = [{name: 'start',description: 'initialize the project'},
-											{name: 'test',description: 'initialize the project'},
-											{name: 'dev',description: 'initialize the project'},
-											{name: 'release',description: 'initialize the project'},
-											{name: 'page <page-name>',description: 'initialize the project'},
-											{name: 'component <component-name>',description: 'initialize the project'},
+const commandLines = [{name: 'start',description: 'Start local server. development env'},
+											{name: 'test',description: 'Start local server. test code with mocha and chai'},
+											{name: 'release <devel-or-public-or-production>',description: 'deplory'},
+											{name: 'page <page-name>',description: 'create html-page'},
+											{name: 'component <component-name>',description: 'create React-component'},
 										 ];
 
 const getOption = function(name){
-	return {name:name,commanderLength: program.args.length,prot:program.port,host:program.host};
+	return {name:name,commanderLength: program.args.length,port:program.port,host:program.host};
 };
 
 const createCommanders = function(data,callback){
@@ -25,7 +24,7 @@ const createCommanders = function(data,callback){
 				if(argsLen > 1){
 					
 					const testFind = program.args[1];
-					if( testFind && typeof testFind.name === 'function' && (testFind.name() === 'page' || testFind.name() === 'component')){ name = testFind.name(); }else{
+					if( testFind && typeof testFind.name === 'function' && (testFind.name() !== 'start' || testFind.name() !== 'test')){ name = testFind.name(); }else{
 						console.log('not support parse multiple commander lines.');
 						return;
 					}
@@ -37,12 +36,12 @@ const createCommanders = function(data,callback){
 
 const programObject = function(projectConfig,callback){
 
-	const prot = projectConfig.PORT;
+	const port = projectConfig.PORT;
 	const host = projectConfig.HOST;
 
 	program
 		.version(projectConfig.SMART_VERSION)
-		.option('-P --port <prot>','set sever port. default is ' + prot,Number,prot)
+		.option('-P --port <port>','set sever port. default is ' + port,Number,port)
 		.option('-H --host <host>', 'set sever host. default is ' + host,host);
 
 	createCommanders(commandLines,callback);

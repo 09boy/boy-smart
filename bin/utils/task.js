@@ -2,38 +2,16 @@ const path = require('path');
 const fs = require('fs');
 
 const server = require('../server/server.js');
+//const merge = require('./utils.js').merge;
 
 require('shelljs/global');
 
-
-// start test release pro page component 
-
-/*
-check node_modules --» true --» execute task ---|___ start
-									|                    ^        |
-									◊                    |        |___ test
-								false                  |        |
-									|                    |        |___ dev  
-									◊                    |        |
-									|                    |        |___ release
-					execute npm install          |        |
-									|                    |        |___ page
-									|                    |        |
-									|                    |        |___ component
-									◊                    |
-		   create project directories      |
-		   						|										 |
-		   						◊____________________|						
-*/
-
-
-// var isInitializeSmart = false;
 
 var smartConfig,
 		structrueObj,
 		smartName,
 		ROOT_PATH;
-// use webpack in node_modules/.bin/webpack
+
 var webpack,
 		mocha;
 
@@ -60,16 +38,11 @@ const initialization = function(){
 	console.log('initialization project directories...');
 	createProjectStructure(structrueObj);
 	createPage('index');
-};
-
-const copyHideConfigFile = function(){
-	cp(path.join(__dirname,'..','smart-install/.babelrc'),ROOT_PATH);
-	cp(path.join(__dirname,'..','smart-install/.gitignore'),ROOT_PATH);
+	createMockConfigFile();
 };
 
 const checkInitialize = function(){
 
-	//test('-e',ROOT_PATH + '/bin')
 	const hasPackageFile = test('-e',ROOT_PATH + '/package.json');
 	if(!hasPackageFile){
 		console.log('installing project dependences package...');
@@ -78,8 +51,6 @@ const checkInitialize = function(){
 	}else{
 		//console.log('merge package');
 	}
-		//copyHideConfigFile();
-		//fs.writeFile(path.join(ROOT_PATH,'node_modules',smartName,'bin/smart-install','install.json'),JSON.stringify({isInstall:true}),'utf8');
 	if(!test('-e',ROOT_PATH + '/' + structrueObj.SRC_DIR.NAME)){ return false;}
 	return true;
 };
@@ -97,12 +68,16 @@ const createPage = function(name){
 	}
 };
 
+const createMockConfigFile = function(){
+	if(!test('-e',path.join(ROOT_PATH,'mock.config.js'))){
+		cp(path.join(__dirname,'..','templates/mock.config.template.js'),ROOT_PATH);
+		mv(ROOT_PATH + '/mock.config.template.js', ROOT_PATH + '/mock.config.js');
+	}
+};
+
 const executeWebpack = function(){
 
 	exec(webpack + ' --config ' + path.join(__dirname, '..', 'webpack', 'config.js') + ' --progress --colors --inline');
-
-	// test : mocha & chai
-	// mocha + ' --config ' + path.join(__dirname, '..', 'webpack', 'config.js');
 };
 
 const run = function(){
@@ -127,36 +102,40 @@ const task = {
 
 		console.log('task: test');
 		process.env.MODE = 'test';
-		run();
+		exec(mocha + ' ' + path.join(ROOT_PATH,structrueObj.SRC_DIR.NAME,structrueObj.SRC_DIR.TEST_DIR) + ' --recursive --colors --reporter mochawesome') // --watch --reporter-options reportDir=
 	},
-	// 预发布
-	dev: function(){
+	// 打包 ｜ 内测，公测，生产
+	release: function(answers){
 
-		console.log('task: dev');
-		process.env.MODE = 'dev';
-		run();
-	},
-	// 打包 ｜ 生产环境
-	release: function(){
-
-		console.log('task: release');
-		process.env.MODE = 'production';
+		var pack;
+		if(!answers){
+			const packs = ['devel','public','production'];
+			pack = process.argv.splice(3)[0];
+			if(packs.indexOf(pack) < 0) {
+				console.log('Argument Error: devel or public or production');
+				return;
+			}
+		}else {
+			pack = answers.pack;
+		}
+		console.log('task: ' + pack);
+		process.env.MODE =  pack;//'production';
 		run();
 	},
 	// 创建新页面
-	page: function(MODE){
+	page: function(answers){
 
-		console.log('task: page');
 		initialization();
-		const pagesData = process.argv.splice(3);
+		const pagesData = !answers ? process.argv.splice(3) : answers.pageNames;
 		pagesData.map(createPage);
-		server.restart(smartConfig);
+		console.log('task: page');
+		// server.restart(smartConfig);
 	},
 	// 创建新组建
 	component: function(){
-
-		console.log('task: component');
-		initialization();
+		console.log('开发中...');
+		//console.log('task: component');
+		//initialization();
 	}
 };
 
@@ -167,7 +146,7 @@ const taskObject = function(_smartConfig){
 	ROOT_PATH = smartConfig.ROOT_PATH;
 	smartName = smartConfig.NAME;
 	webpack = path.join(__dirname, '..', '..' ,'node_modules', '.bin', 'webpack');
-	mochaf = path.join(__dirname, '..', '..', 'node_modules', '.bin','mocha');
+	mocha = path.join(__dirname, '..', '..', 'node_modules', '.bin','mocha');
 	return task;
 };
 

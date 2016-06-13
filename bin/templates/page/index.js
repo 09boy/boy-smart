@@ -1,5 +1,5 @@
 /*
- * 入口文件. 强烈建议只当作 Factory 去使用
+ * 入口文件
  */
 
 import React from 'react';

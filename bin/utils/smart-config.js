@@ -9,6 +9,8 @@ const config = {
 
 	ESLINT: true,
 
+	BASE64_LIMIT_SIZE: '8192',    // use base64 <= 8kb
+
   STATIC: { 										//CDN domain, or just leave it blank if not using
 
   	START: '',									// here use relative path							
@@ -18,9 +20,9 @@ const config = {
 
   API: {												// API ENTRY
 
-  	START: '',									// local api
-  	DEV: '', 										// dev api
-  	RELEASE: ''									// online api 
+  	START: '',									// local api  [ develop.example.com ]
+  	DEV: '', 										// dev api    [ dev.example.com ]
+  	RELEASE: ''									// online api [ example.com ]
   },
 
 	PROJECT_STRUCTURE: {
@@ -39,32 +41,18 @@ const config = {
 
 				FONTS_DIR: 'fonts',
 
-				JS_DIR: 'js',						// 公共 js 模块
+				JS_DIR: 'js',								// 公共 js 模块
 
-				SASS_DIR: 'sass',				// 公共 css 模块
+				SASS_DIR: 'sass',						// 公共 css 模块
 			},
 
-			PAGES_DIR: 'pages',				// 页面
+			PAGES_DIR: 'pages',						// 页面目录
 			
-			COMPONENTS_DIR: 'components'  // 组件目录
+			COMPONENTS_DIR: 'components', // 组件目录
+
+			TEST_DIR: 'test'              // 单元测试目录
 		}
 	}
 };
 
 module.exports = config;
-
-/*
-
-	├── /build/                              # 代码打包目录
-    ├── /node_modules/                      # node依赖包
-    ├── /src/                               # 源码目录
-    │   ├── /pages/                         # 页面
-    │   ├── /components/                    # 公用组件
-    │   ├── /assets/                        # 图片、字体资源
-    │   ├── /scss/                          # 公用样式    
-    │   └── /js/                         		# 公用JS模块
-    ├── pepper.config.js                    # pepper的配置文件
-    ├── index.template.html                 # 首页HTML模版, 可选
-    └── package.json
-
-*/
