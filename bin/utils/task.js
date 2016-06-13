@@ -39,6 +39,7 @@ const initialization = function(){
 	createProjectStructure(structrueObj);
 	createPage('index');
 	createMockConfigFile();
+	createEslintFile();
 };
 
 const checkInitialize = function(){
@@ -72,6 +73,12 @@ const createMockConfigFile = function(){
 	if(!test('-e',path.join(ROOT_PATH,'mock.config.js'))){
 		cp(path.join(__dirname,'..','templates/mock.config.template.js'),ROOT_PATH);
 		mv(ROOT_PATH + '/mock.config.template.js', ROOT_PATH + '/mock.config.js');
+	}
+};
+
+const createEslintFile = function(){
+	if(!test('-e',path.join(ROOT_PATH,'.eslintrc'))){
+		cp(path.join(__dirname,'..','smart-install/.eslintrc'),ROOT_PATH);
 	}
 };
 
