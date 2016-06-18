@@ -27,11 +27,7 @@ cd 命令进入你工作的目录。这里用我的目录举例 /Users/xx-name/p
 ```bash
   $ npm install --save-dev boy-smart
 ```
-本地安装需要通过 npm link boy-smart 命令开启 smart 命令，之后可以在任何地方使用 smart 命令。相当于全局安装
 
-```bash
-  $ npm link boy-smart
-```
 
 ##### 2. git install
 
@@ -40,6 +36,14 @@ cd 命令进入你工作的目录。这里用我的目录举例 /Users/xx-name/p
 ```bash
  $ git clone git@github.com:09boy/boy-smart.git
 ```
+
+
+本地安装完毕后需要通过 npm link boy-smart 命令开启 smart 命令，之后可以在任何地方使用 smart 命令。相当于全局安装
+
+```bash
+  $ npm link boy-smart
+```
+
 
 ***
 
@@ -142,5 +146,8 @@ cd 命令进入你工作的目录。这里用我的目录举例 /Users/xx-name/p
         |-- test                                        ＃ 单元测试目录
 ```
 
+## 使用注意事项
+
+整理中...
 
 #### Issues: <https://github.com/09boy/boy-smart/issues>
