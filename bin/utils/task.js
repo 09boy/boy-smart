@@ -102,6 +102,7 @@ const task = {
 
 		console.log('task: test');
 		process.env.MODE = 'test';
+		//  + 'js:babel-core/register '
 		exec(mocha + ' ' + path.join(ROOT_PATH,structrueObj.SRC_DIR.NAME,structrueObj.SRC_DIR.TEST_DIR) + ' --recursive --colors --reporter mochawesome') // --watch --reporter-options reportDir=
 	},
 	// 打包 ｜ 内测，公测，生产
