@@ -6,7 +6,6 @@ const server = require('../server/server.js');
 
 require('shelljs/global');
 
-
 var smartConfig,
 		structrueObj,
 		smartName,
@@ -32,27 +31,46 @@ const createProjectStructure = function(dirObj,dirPath){
 	}
 };
 
+const checkInit = function(){
+ 
+	// checking structure folder is exist 
+	if(!test('-e',ROOT_PATH + '/' + structrueObj.SRC_DIR.NAME) || !test('-e',ROOT_PATH + '/' + structrueObj.BUILD_DIR)){
+		return false;
+	}
+	return true;
+};
+
 const initialization = function(){
 	
-	if(checkInitialize()) { return; }
+	if(checkInit()) { return; }
 	console.log('initialization project directories...');
 	createProjectStructure(structrueObj);
 	createPage('index');
 	createMockConfigFile();
+	createEslintFile();
+	installDependecesPackages();
 };
 
-const checkInitialize = function(){
+const installDependecesPackages = function(){
 
-	const hasPackageFile = test('-e',ROOT_PATH + '/package.json');
+	const devPackagePath = ROOT_PATH + '/package.json';
+	const dependPackagePath = path.join(__dirname,'..','smart-install/package.json');
+
+	const hasPackageFile = test('-e',devPackagePath);
 	if(!hasPackageFile){
-		console.log('installing project dependences package...');
-		cp(path.join(__dirname,'..','smart-install/package.json'),ROOT_PATH);
-		exec('npm install');
+		cp(dependPackagePath,ROOT_PATH);
 	}else{
-		//console.log('merge package');
+
+		const merge = require('./utils.js').merge;
+		//read file
+		const devData = JSON.parse(fs.readFileSync(devPackagePath, 'utf-8'));
+		const dependData = JSON.parse(fs.readFileSync(dependPackagePath, 'utf-8'));
+		// merge dependecies
+		merge(devData.devDependencies,dependData.devDependencies);
+		fs.writeFileSync(devPackagePath,JSON.stringify(devData,null,2));
 	}
-	if(!test('-e',ROOT_PATH + '/' + structrueObj.SRC_DIR.NAME)){ return false;}
-	return true;
+	console.log('installing project dependences package...');
+	exec('npm install');
 };
 
 const createPage = function(name){
@@ -72,6 +90,12 @@ const createMockConfigFile = function(){
 	if(!test('-e',path.join(ROOT_PATH,'mock.config.js'))){
 		cp(path.join(__dirname,'..','templates/mock.config.template.js'),ROOT_PATH);
 		mv(ROOT_PATH + '/mock.config.template.js', ROOT_PATH + '/mock.config.js');
+	}
+};
+
+const createEslintFile = function(){
+	if(!test('-e',path.join(ROOT_PATH,'.eslintrc'))){
+		cp(path.join(__dirname,'..','smart-install/.eslintrc'),ROOT_PATH);
 	}
 };
 
@@ -102,8 +126,11 @@ const task = {
 
 		console.log('task: test');
 		process.env.MODE = 'test';
-		//  + 'js:babel-core/register '
-		exec(mocha + ' ' + path.join(ROOT_PATH,structrueObj.SRC_DIR.NAME,structrueObj.SRC_DIR.TEST_DIR) + ' --recursive --colors --reporter mochawesome') // --watch --reporter-options reportDir=
+		initialization();
+		if(!test('-e',ROOT_PATH + '/.babelrc')){
+			fs.writeFileSync(ROOT_PATH + '/.babelrc', JSON.stringify({presets:['es2015','stage-0','react']}, null ,2));
+		}
+		exec(mocha + ' ' + '--compilers js:' + path.join(__dirname,'..','..','node_modules','babel-core') + '/register ' + path.join(ROOT_PATH,structrueObj.SRC_DIR.NAME,structrueObj.SRC_DIR.TEST_DIR) + ' --recursive --colors --reporter mochawesome') // --watch --reporter-options reportDir=
 	},
 	// 打包 ｜ 内测，公测，生产
 	release: function(answers){
