@@ -13,8 +13,14 @@
     "react/prefer-stateless-function": 1
   },
   "plugins": [
-      "react"
+      "react",
+      "import"
   ],
+  "settings": {
+    "import/resolve": {
+      "extensions": [".es6", ".js", ".jsx", ".css", ".scss", ".less"]
+    }
+  },
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true

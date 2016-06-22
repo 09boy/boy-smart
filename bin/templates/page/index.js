@@ -5,10 +5,9 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import './style';
+// eslint unable to resolve ./style
+import './style.scss';
 import App from './App';
-
-'use strict'; 
 
 const contentEl = document.createElement('div');
 
