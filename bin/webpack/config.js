@@ -119,7 +119,10 @@ const getConfig = function(smartConfig){
       extensions: ['', '.js', '.jsx','.scss','.css','.less']
   	},
   	eslint: {
-  		configFile: path.join(__dirname,'..','..','.eslintrc')
+  		rules: {
+  			'no-console': isDevelopment ? 1 : 2
+  		},
+  		configFile: path.join(__dirname,'..','..','.eslintrc'),
   	}
 	};
 

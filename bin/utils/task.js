@@ -126,7 +126,6 @@ const task = {
 
 		console.log('task: test');
 		process.env.MODE = 'test';
-		
 		initialization();
 		if(!test('-e',ROOT_PATH + '/.babelrc')){
 			fs.writeFileSync(ROOT_PATH + '/.babelrc', JSON.stringify({presets:['es2015','stage-0','react']}, null ,2));
