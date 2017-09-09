@@ -1,129 +1,102 @@
-const path = require('path');
-const webpack = require('webpack');
-const CleanPlugin = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const extractCSS = new  ExtractTextPlugin('[name]-[hash].css');
+const { existsSync, readFileSync } = require('fs');
+const { ROOT_DIR, APP_ROOT_DIR, RECORD_LOG_PATH } = require('../util/constant.js');
+// const dllConfigs = require('./dll.config.js');
+const util = require('./util.js');
+const loaderPart = require('./loader.part.js');
+const { commonPlugins, prodPlugins, devPlugins, minifyCSS, babili, dllReference } = require('./plugin.part.js');
 
-const merge = require('../utils/utils.js').merge;
-const resolvePath = require('../utils/utils.js').resolvePath;
+module.exports = (env, projectConfig, projectMode) => {
+	// console.log('dev env:::', env, process.env.NODE_ENV);
+	
+	if (projectConfig.build_dir === undefined) {
+		const data = readFileSync(RECORD_LOG_PATH, 'utf8');
+		if (!data || Object.keys(data).length === 0) return null; // Error: reading smart config file is fail.
 
-require('shelljs/global');
+		/**
+		 * smartConfig = projectConfig
+		 * mode = projectMode.mode
+		 */
+		const { smartConfig, mode } = JSON.parse(data)[APP_ROOT_DIR];
+		projectConfig = smartConfig;
+		projectMode = {mode};
+	}
 
-const getConfig = function(smartConfig){
+	const isDev = env === 'dev';
+	const { rules, babelOptions, happypackLoader, babelLoader, loaderPath } = loaderPart(env, projectConfig);
+	const { vendor, api, globals, devtool, extensions, resolve_alias, build_dir, dev_structure_dir } = projectConfig;
+	const { entry, output, isSPA, htmlPlugins, extractPlugins } = util(env, projectConfig);
+	// const { dllConfig, dllName, dllRefNames } = dllConfigs(APP_ROOT_DIR, vendor);
+	const SOURCE_DIR = `${APP_ROOT_DIR}/${dev_structure_dir.base}`;
+	// const dllPath = APP_ROOT_DIR + `/manifest.${dllRefNames[0]}.json`;
+	// const hasDellFile = existsSync(dllPath);
 
-	const STRUCTURE = smartConfig.PROJECT_STRUCTURE;
+	// console.log('hasDellFile:::', hasDellFile);
+	let plugins = [...commonPlugins(env, projectConfig), ...htmlPlugins, ...extractPlugins]; 
 
-	const ROOT_PATH = smartConfig.ROOT_PATH;
-	const ENTRY_PATH = path.join(ROOT_PATH,STRUCTURE.SRC_DIR.NAME);
-	const BUILD_PATH  = path.join(ROOT_PATH,STRUCTURE.BUILD_DIR);
+	let devtoolValue = devtool;
+	
+	rules.push(babelLoader(env, projectMode.mode));
 
-	const envMode = process.env.MODE || 'development';
-	const isDevelopment = envMode === 'development';
-	// const isProduction = envMode === 'production';
-
-	const prename = isDevelopment ? 'dev' : 'pro';
-	const envConfig = require('./' + prename  + '.config.js');
-
-  const plugins = [
-		new webpack.DefinePlugin((function(){
-
-			const node_env = ['devel','public','production'].indexOf(envMode) > -1 ? 'production' : envMode;
-      var global_defines =  {
-        'process.env': {
-          'MODE': JSON.stringify(envMode),
-          'NODE_ENV': JSON.stringify(node_env),
-          'BABEL_ENV': JSON.stringify(node_env),
-	      }/*,
-	      'API': JSON.stringify(config.api[process.env.MODE]),
-	      'STATIC': JSON.stringify(config.static[process.env.MODE])*/
-      };
-      return global_defines;
-    })()),
-		new webpack.optimize.CommonsChunkPlugin('vendors','vendors.js'),
-		extractCSS
-	];
-
-	merge(plugins, envConfig.plugins(STRUCTURE.BUILD_DIR,ROOT_PATH));
-
-	const loaders = [
-		{ test: /\.css/, loader: extractCSS.extract(['css','style']), include: ENTRY_PATH, exclude: /node_modules/},
-		{ test: /\.scss/, loader: extractCSS.extract(['css','sass']), include: ENTRY_PATH, exclude: /node_modules/},
-		{ test: /\.(png|jpg|jpeg|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=\.]+)?$/, loader: 'url-loader?limit=' + smartConfig.BASE64_LIMIT_SIZE + '&name=[path][name].[ext]?[hash]', include: ENTRY_PATH, exclude: /node_modules/ }
-	];
-
-	merge(loaders, envConfig.loaders(ENTRY_PATH,resolvePath));
-
-	// 页面 入口
-	const multipleEntry = function(){
-
-		const pagesPath = path.join(ROOT_PATH,STRUCTURE.SRC_DIR.NAME + '/' + STRUCTURE.SRC_DIR.PAGES_DIR);
-		const pages = ls(pagesPath);
-		const entrys = {
-			vendors: smartConfig.vendors || [] // 'react', 'react-dom' common libs bundle
+	if (!isDev) {
+		switch (process.env.MODE) {
+			case 'pro':
+			case 'gray':
+				devtoolValue = 'source-map';
+				plugins.push(babili(), minifyCSS());
+				break;
+			case 'release':
+				devtoolValue = false;
+				plugins.push(babili({removeConsole: true, removeDebugger: true}), minifyCSS());
+				break;
+			// case 'dev':
+			default:
+				break;
 		};
-		if(pages.length){
+	}
+	
+	const mainConfig = {
+		name: 'main',
+		// the base path which will be used to resolve entry points
+		context: APP_ROOT_DIR, //ROOT_DIR,
 
-			pages.forEach(function(dirname){
-				entrys[dirname] = isDevelopment ? [path.join(__dirname,'..','..','node_modules','webpack-hot-middleware') + '/client?reload=true',resolvePath('babel-polyfill'),pagesPath + '/' + dirname] : [ pagesPath + '/' + dirname];
-				plugins.push(new HtmlWebpackPlugin({
-					chunks:[dirname,'vendors','style'],
-					filename: dirname + '.html',
-					title: dirname + ' - SPA',
-					template: path.join(__dirname,'..','templates','html','index.template.html')}
-				));
-			});
-		
-			return entrys;
-		}
-		
-		// plugins.push(getHTMLTemplate({chunks:['bundle'],filename: 'index.html',template: path.join(__dirname,'..','templates','html','index.template.ejs')}));
-		// entrys.bundle = ['webpack-hot-middleware/client?reload=true','babel-polyfill',ENTRY_PATH];
-		// return entrys;
-	};
+		// dependencies: [dllName],
 
-	const common = {
+		entry,
 
-		context: ROOT_PATH,
-		debug: isDevelopment,
-		devtool: isDevelopment ?'eval-source-map' : false,//'eval',//
-		// https://github.com/glenjamin/webpack-hot-middleware/issues/78
-		entry: multipleEntry(),
+		output,
 
-		output: {
-			path: BUILD_PATH,
-			filename:'[name]-[hash].js',
-			publicPath: '/' // 'http://cdn.example.com/assets/[hash]'
-		},
-		plugins: plugins,
+		devtool: devtoolValue,
+
 		module: {
-			// 也许你想在写代码的时候检查自己的js是否符合jshint的规范，那么隆重推荐preLoaders和postLoaders，上一节我们已经非常了解loaders了，用它来处理各种类型的文件。perLoaders顾名思义就是在loaders执行之前处理的，webpack的处理顺序是perLoaders - loaders - postLoaders
-			// babel-eslint ESLint 是前端JS代码检测利器。而 babel-eslint 则允许你检测所有的 Babel 代码
-			// eslint JavaScript 语法检测利器：分析出你代码潜在的错误和非标准用法
-			// eslint-plugin-react ESLint 中关于 React 语法检测的插件
-			preLoaders: smartConfig.ESLINT ? [{
-                test: /\.(js|jsx)$/,
-                loader: resolvePath('eslint-loader'),
-                include: ENTRY_PATH,
-                exclude: /node_modules/
-            }] : [],
-			//https://zhuanlan.zhihu.com/p/20522487?refer=FrontendMagazine
-			loaders: loaders
+			// since webpack 3.0.0
+			// noParse: (content) => (/jquery|lodash/.test(content)),
+			rules,
 		},
+
 		resolveLoader: {
-			root: path.join(__dirname,'..','..','node_modules')
+			modules: [ROOT_DIR + '/node_modules', ROOT_DIR + '/'],
+			alias: {
+				'async-loader':  ROOT_DIR + '/loaders/async-loader/index.js',
+				'async-auto-loader': ROOT_DIR + '/loaders/async-auto-loader/index.js'
+			}
 		},
+
 		resolve: {
-			root: ENTRY_PATH,
-			//moduleDirectories: ['node_modules', 'bower_components'],
-      extensions: ['', '.js', '.jsx','.scss','.css','.less']
-  	},
-  	eslint: {
-  		configFile: path.join(__dirname,'..','..','.eslintrc')
-  	}
+			modules: ['node_modules', 'bower_components', SOURCE_DIR],
+			extensions: [...extensions],
+			alias: resolve_alias || {},
+			aliasFields: [],
+		},
+
+		plugins: isDev ? [...plugins, ...devPlugins()] : [...plugins, ...prodPlugins()],
 	};
 
-	return common;
+	// 下一版本优化
+	// let config = [dllConfig, mainConfig];
+	// if (hasDellFile) {
+	// 	plugins.push(dllReference(dllPath));
+	// 	config = mainConfig; 
+	// }
+	// dllConfig.output.publicPath = mainConfig.output.publicPath;
+	return mainConfig;
 };
-
-module.exports = !process.env.MODE || process.env.MODE === 'development' ?  getConfig : getConfig(require('../utils/smart-config.js'));

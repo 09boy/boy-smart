@@ -1,4 +1,4 @@
-![boy-smart](./documents/images/logo.png)
+![boy-smart](./images/logo.png)
 #### 描述
 **smart** 是基于webpack用于前端开发和构建为一体的快速职能工具。目前主要用在SPA项目上。
 
@@ -143,11 +143,11 @@ smart
 ````
 如果当前目录不是一个 smart 目录，将出现下面界面：
 
-![](./documents/images/init.png)
+![](./images/init.png)
 
 如果当前目录是一个 smart 目录，将会是这样的界面:
 
-![](./documents/images/start.png)
+![](./images/start.png)
 
 > 上面可能对于新手有点帮助, 会一步一步根据提示完成操作
 
@@ -276,7 +276,7 @@ project dir 					项目目录
 	结构和 react project 大致相同, 存在很多细节的区别，这是因为两者(vuex & redux)之间不同之处产生的，更详细请看demo实例。 
 	
 	
-	![](./documents/images/vue.png)
+	![](./images/vue.png)
 	
 	创建新页面自动绑定到路由配置文件，你只需要关注根据需求如何使用数据就行。
 	
