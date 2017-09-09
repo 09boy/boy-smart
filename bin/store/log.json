@@ -1,0 +1,156 @@
+{
+  "/Users/qinmin/Person/test/smart-framework/work/test-hot": {
+    "status": "Press Control-C to exit | BeforeExit.",
+    "project_name": "test-hot",
+    "mode": "react",
+    "action": "server",
+    "smartConfig": {
+      "host": "127.0.0.1",
+      "port": 3000,
+      "favicon": null,
+      "vendor": [
+        "react",
+        "react-dom",
+        "react-router-dom",
+        "react-router-redux",
+        "redux",
+        "redux-thunk",
+        "history"
+      ],
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".vue",
+        ".css",
+        ".scss",
+        ".less"
+      ],
+      "provide": {
+        "React": "react"
+      },
+      "externals": [],
+      "devtool": "eval-source-map",
+      "base64_image_limit": 5120,
+      "module_noParse": [],
+      "resolve_alias": {
+        "components": "components",
+        "utils": "utils",
+        "assets": "assets",
+        "app": "app",
+        "pages": "pages"
+      },
+      "static": {
+        "start": "/",
+        "test": "/",
+        "pre": "/",
+        "release": "/"
+      },
+      "api": {
+        "start": "//",
+        "test": "//",
+        "pre": "//",
+        "release": "//"
+      },
+      "globals": {
+        "API_HTTP": {
+          "start": "//",
+          "test": "//",
+          "pre": "//",
+          "release": "//"
+        }
+      },
+      "build_dir": "dist",
+      "dev_structure_dir": {
+        "base": "src",
+        "pages": "pages",
+        "assets": "assets",
+        "components": "components",
+        "utils": "utils",
+        "app": {
+          "base": "app",
+          "actions": "actions",
+          "action_type": "constants",
+          "reducers": "reducers",
+          "selectors": "selectors",
+          "store": "store"
+        }
+      }
+    }
+  },
+  "/Users/qinmin/Person/test/dd": {
+    "status": "unknow",
+    "project_name": "dd",
+    "mode": "waht",
+    "action": "init"
+  },
+  "/Users/qinmin/Person/test/smart-framework/work/normal-project-demo": {
+    "status": "Press Control-C to exit | BeforeExit.",
+    "project_name": "normal-project-demo",
+    "mode": "normal",
+    "action": "start",
+    "smartConfig": {
+      "host": "127.0.0.1",
+      "port": 3000,
+      "favicon": null,
+      "vendor": [
+        "backbone",
+        "jquery"
+      ],
+      "extensions": [
+        ".js",
+        ".css",
+        ".scss",
+        ".less"
+      ],
+      "provide": {
+        "Backbone": "backbone",
+        "$": "jquery"
+      },
+      "externals": [],
+      "devtool": "eval-source-map",
+      "base64_image_limit": 5120,
+      "module_noParse": [],
+      "resolve_alias": {
+        "pages": "pages",
+        "omponents": "components",
+        "utils": "utils",
+        "assets": "assets"
+      },
+      "enabled_external_template": true,
+      "static": {
+        "start": "/",
+        "test": "/",
+        "pre": "/",
+        "release": "/"
+      },
+      "globals": {
+        "API_HTTPS": {
+          "start": "//",
+          "test": "//",
+          "pre": "//",
+          "release": "//"
+        },
+        "API_HTTP": {
+          "start": "//",
+          "test": "//",
+          "pre": "//",
+          "release": "//"
+        }
+      },
+      "build_dir": "dist",
+      "dev_structure_dir": {
+        "base": "src",
+        "pages": "pages",
+        "assets": "assets",
+        "components": "components",
+        "utils": "utils"
+      }
+    }
+  },
+  "/Users/qinmin/Person/test/smart-framework/work/test-vue": {
+    "status": "start",
+    "project_name": "test-vue",
+    "mode": "vue",
+    "action": "start"
+  }
+}

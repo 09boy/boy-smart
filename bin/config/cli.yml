@@ -1,0 +1,176 @@
+Version: 0.1.0
+
+port: &port
+  name: -p, --port [n]
+  des: set port
+  callback: parseInt
+host: &host
+  name: -h, --host [n]
+  des: set host
+  callback: parseInt
+
+server: &server
+  - *port
+  - *host
+
+mode: &mode
+    name:  -m, --mode <mode>
+    des: set project mode = { normal | create-react | create-vue } (will use normal if it is empty)
+    valueRange:
+      - normal
+      - react
+      - vue
+
+Options: []
+
+Commands:
+  init:
+    name: init
+    des: to create installation files of a Smart app
+    args: <app-name>
+    options:
+      - *mode
+      # - 
+      #   name:  -m, --mode <mode>
+      #   des: set project mode = { normal | create-react | create-vue } (will use normal if it is empty)
+      #   valueRange:
+      #     - normal
+      #     - react
+      #     - vue
+    active_name: Init
+    interactive: &project-interactive
+      type: list
+      name: mode
+      message: Select Porject Mode
+      choices: 
+        - name: Normal
+          value: create
+
+        - name: React & Redux
+          value: create-react
+
+        - name: Vue
+          value: create-vue
+      interactive:
+        type: input
+        name: mode-name
+        message: Project Name
+        validate: no-comma
+        arg: true
+  
+  install:
+    name: install
+    des: to install depens packages
+
+    active_name: Install
+
+  server:
+    name: server
+    options: *server
+
+    active_name: Server
+
+
+  create:
+    children:
+      -
+        name: create
+        des: Create a new normal project
+        args: <name>
+        options: *server
+      -
+        name: create-react
+        des: Create a new project with react & redux
+        args: <name>
+        options: *server
+      -
+        name: create-vue
+        des: Create a new project with vue
+        args: <name>
+        options: *server
+    active_name: Create A New Project
+    interactive: *project-interactive
+
+  start:
+    active_name: Development
+    name: start
+    des: To development
+    options: *server
+  
+  build:
+    active_name: Build
+    name: build
+    des: env = dev | pro | gray | release
+    args: <env>
+    valueRange:
+      # will be removed prop-types property when the proejct-mode is React
+      #
+      # no compress & depend on project-mode
+      - dev
+      # compress with source-map && depend on project-mode
+      - pro
+      # comporess without source-map && depend on project-mode
+      - gray
+      # comporess without source-map and delete 'console' && depend on project-mode
+      - release
+
+    interactive:
+      type: list
+      name: env
+      message: Select Build ENV
+      choices: 
+        - name: Develop
+          value: build-dev
+
+        - name: Pro
+          value: build-pro
+
+        - name: Gray
+          value: build-gray
+
+        - name: Release
+          value: build-release
+  
+  page:
+    active_name: Create A New Page
+    name: page
+    des: create new page, more than one use the empty space splice
+    options:
+      - *mode
+    args: <names>
+    interactive:
+      type: input
+      name: page-name
+      message: Page Name [* more than one use comma splice. *]
+      validate: comma
+      arg: true
+
+  component:
+    active_name: Create A New Component
+    name: component
+    des: create new Component, more than one use the empty space splice
+    options:
+      - *mode
+    args: <name>
+    interactive:
+      type: input
+      name: component-name
+      message: Component Name [* more than one use comma splice. *]
+      validate: comma
+      arg: true
+  
+  del:
+    name: del
+    des: delete an smart app of existing in CWD
+    args: <app-folder-name>
+    active_name: Delete A Smart-Project
+    interactive:
+      type: input
+      name: app-folder-name
+      message: Input app folder name that you want to delete
+      arg: true
+
+  upgrade:
+    active_name: Upgrade Smart
+    name: upgrade
+    des: Update Smart

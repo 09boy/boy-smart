@@ -1,0 +1,98 @@
+# server
+host: 127.0.0.1
+port: 3000
+
+# 
+# afterCreatedToStartServer: true
+
+# only for SPA
+favicon: 
+
+# an array of string
+vendor: ['vue', 'vuex', 'vue-router']
+
+# tell webpack which extensions to auto search when it resolves modules. With this,
+# you'll be able to do `require('./utils')` instead of `require('./utils.js')`
+extensions: ['.js', '.css', '.scss', '.less', '.vue']
+
+# {}
+provide:
+  Vue: vue
+
+# https://webpack.js.org/configuration/externals/
+# object || array || string
+externals: []
+
+# for development. // inline-source-map
+devtool: eval-source-map
+
+# default size is 5k
+# less or equal base64_image_limit value use data url else use img url with hash hash
+base64_image_limit: 5120
+
+module_noParse: []
+
+# {object}
+resolve_alias:
+  pages: pages
+  omponents: components
+  utils: utils
+  assets: assets
+
+# CDN domain, or just leave it blank
+static:
+  # here use relative path
+  start: /
+  test: /
+  # here use CDN domain
+  pre: /
+  #here use CDN domain
+  release: /
+
+# HTTP
+# you can set api server address for development: //test.example.api.com (to replace your server address)
+# {object}
+# configure global variables
+globals:
+  API_HTTPS:
+    start: //
+    test: //
+    pre: //
+    release: //
+
+  API_HTTP:
+    start: //
+    test:  //
+    pre:  //
+    release: //
+  # ...to parse more one
+  #OTHER_API_HTTP:
+    #start: //
+    #...
+
+# directory for production
+build_dir: dist
+
+# default structure for application and develement
+#
+dev_structure_dir:
+  # webpack and development entry dir
+  base: src
+
+  # type of string or object. if the value is string means it is SPA app, otherwise is multiple app.
+  # following code is multiple app config.
+  # pages:
+  #  - home
+  #  - about
+  pages: pages
+  
+  # for global management common static assets, likes css, image, font and et.
+  assets: assets
+  
+  components: components
+
+  utils: utils
+  
+  # common vuex
+  app: app
+  
