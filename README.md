@@ -192,6 +192,7 @@ project dir 					项目目录
 ## 项目简要说明以及DEMO
 
 ###Normal Project
+
 **normal 项目，暂时没有集成任何针对性的代码库或者插件，出于下面几个原因:**
 
 1. 有针对性，就有了限制的范围。对于普通项目的来说，未必有伸展行
@@ -210,11 +211,12 @@ project dir 					项目目录
 		
 		> 因为未知模版类型，所以只会单纯的复制模版文件！同样也不会动态帮你拆封页面代码，因为无法感知到你用什么样第三方类库去整合，你可以用import(path) 或 require.ensure 实现按需加载。
 			
-**关于 Hot Module Replacement**
-	
-> 不像 react 和 vue 项目都有现成的 loader 去处理， 所以对于普通项目来说，你可以先去[webpack官网](https://webpack.js.org/api/hot-module-replacement/), 了解下相应的知识，这对你理解很有帮助。<br> 其实对于任何文件都可以做到HMR。<br>时间宽裕可以研究再写一个普通项目的HMR插件。<br>下面是smart 创建的normal 项目，用backbone和jquery做了一个SPA 例子，实现了HMR，和页面代码拆封，但没有实现按需加载(通过路由侦听路由实现即可)，下面是地址：
+**关于 Hot Module Replacement**	
+
+  不像 react 和 vue 项目都有现成的 loader 去处理， 所以对于普通项目来说，你可以先去[webpack官网](https://webpack.js.org/api/hot-module-replacement/), 了解下相应的知识，这对你理解很有帮助。<br> 其实对于任何文件都可以做到HMR。<br>时间宽裕可以研究再写一个普通项目的HMR插件。<br>下面是smart 创建的normal 项目，用backbone和jquery做了一个SPA 例子，实现了HMR，和页面代码拆封，但没有实现按需加载(通过路由侦听路由实现即可)，下面是地址：
 	
 [normal-project-demo]()
+
 
 ###React Project
 
@@ -222,7 +224,7 @@ project dir 					项目目录
 		
 	> 如果页面名称为home，默认路由会 ‘／’, 而不是 '/home'
 	
-	>创建子页面后，smart 只把子页面路径放到了router.config.js文件中，并没有添加到相应的父级下，需要你手动添加。关于子路由这个问题很头疼，没有想到有什么好方式，可以勉去这样的操作。
+	> 创建子页面后，smart 只把子页面路径放到了router.config.js文件中，并没有添加到相应的父级下，需要你手动添加。关于子路由这个问题很头疼，没有想到有什么好方式，可以勉去这样的操作。
 	
 - 按需加载页面，通常我们会用 [bundle-loader](https://github.com/webpack-contrib/bundle-loader) 实现拆封代码块。 而 smart 不需要你关注这些，你完全就按普通导入页面即可：
 		
@@ -277,10 +279,11 @@ project dir 					项目目录
 			 ... 省略
 		````
 	把 common代码放在 app 下去管理。
-		
+	
 - 创建组件也一样，会自动绑定到组件入口文件，你不用手动去管理，写完代码在别的地方直接引用即可。
 	
-[react-project-demo]()
+	[react-project-demo]()
+
 
 ###Vue Porject
 	
