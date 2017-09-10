@@ -285,7 +285,7 @@ project dir 					项目目录
 	[react-project-demo]()
 
 
-### Vue Porject###
+### Vue Porject
 	
 结构和 react project 大致相同, 存在很多细节的区别，这是因为两者(vuex & redux)之间不同之处产生的，更详细请看demo实例。 
 	
