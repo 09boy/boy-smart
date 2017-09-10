@@ -60,7 +60,7 @@ class SmartCommand {
 
 		// name is a commander-name;
 		resultValue = {name, args, options};
-		Log.info('result: ', resultValue, valueRange)
+		// Log.info('result: ', resultValue, valueRange)
 	}
 
 	option(config, target) {

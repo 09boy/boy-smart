@@ -23,7 +23,7 @@ module.exports = {
 					reducerLines.splice(index - 1, 0, ...importStr);
 					isAddImport = true;
 					importLinesCount = pages.length;
-				} else if (!parentFolder && line.indexOf('];') > -1) {
+				} else if (!parentFolder && line.indexOf('combineReducers({') > -1) {
 					reducerLines.splice(index + importLinesCount + 1, 0, ...reducerStr);
 				} 
 
@@ -78,7 +78,7 @@ module.exports = {
 			execSync(`touch ${basePath}/index.js ${basePath}/style.scss ${reduxPath}/actions.js ${reduxPath}/selector.js ${reduxPath}/reducer.js`);
 
 			// for reducer
-			importStr.push(`import ${lName} from '../../${relativePagePath}/${lName}/redux/reducer.js';`);
+			importStr.push(`import ${lName} from '../../${structureData.pages}${rootPagePath}/${lName}/redux/reducer';`);
 			reducerStr.push(`\t${lName},`);
 
 			// for router

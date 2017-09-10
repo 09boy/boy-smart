@@ -131,12 +131,18 @@ class Tool {
 				break;
 			case 'react' :
 				const reducerDir = structureData.app.reducers;
-				exec(`cp ${tempDir}/reducer.js ${basePath}/app/${reducerDir}`);
-				exec(`mv ${basePath}/app/${reducerDir}/reducer.js ${basePath}/app/${reducerDir}/index.js`);
-				exec(`cp ${tempDir}/configureStore.js ${basePath}/app/${structureData.app.store}`);
-				exec(`cp ${tempDir}/common.actions.js ${basePath}/app/${structureData.app.actions}`);
-				exec(`mv ${basePath}/app/${structureData.app.actions}/common.actions.js ${basePath}/app/${structureData.app.actions}/index.js`);
-				exec(`cp -r ${tempDir}/demo ${basePath}/${structureData.pages}`);
+
+				exec(`rm -r ${basePath}/${structureData.app}`);
+				exec(`cp -r ${tempDir}/app ${basePath}`);
+				if (structureData.app !== 'app') {
+					exec(`mv -r ${basePath}/app ${basePath}/${structureData.app}`);
+				}
+
+				// exec(`cp ${tempDir}/reducer.js ${basePath}/app/${reducerDir}`);
+				// exec(`mv ${basePath}/app/${reducerDir}/reducer.js ${basePath}/app/${reducerDir}/index.js`);
+				// exec(`cp ${tempDir}/configureStore.js ${basePath}/app/${structureData.app.store}`);
+				// exec(`cp ${tempDir}/common.actions.js ${basePath}/app/${structureData.app.actions}`);
+				// exec(`mv ${basePath}/app/${structureData.app.actions}/common.actions.js ${basePath}/app/${structureData.app.actions}/index.js`);
 				exec(`cp ${tempDir}/pages/index.js ${basePath}/${structureData.pages}`);
 				exec(`cp ${tempDir}/pages/App.js ${basePath}/${structureData.pages}`);
 				exec(`cp ${tempDir}/pages/style.scss ${basePath}/${structureData.pages}`);
