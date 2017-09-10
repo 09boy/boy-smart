@@ -191,7 +191,7 @@ project dir 					项目目录
 
 ## 项目简要说明以及DEMO
 
-###Normal Project###
+### Normal Project
 
 **normal 项目，暂时没有集成任何针对性的代码库或者插件，出于下面几个原因:**
 
@@ -218,7 +218,7 @@ project dir 					项目目录
 [normal-project-demo]()
 
 
-###React Project###
+### React Project
 
 - 创建新页面后会把页面自动绑定到路由配置文件，所以你只需要写一个nav组件去调用数据渲染成你需要的导航样式即可。
 		
@@ -285,7 +285,7 @@ project dir 					项目目录
 	[react-project-demo]()
 
 
-###Vue Porject###
+### Vue Porject###
 	
 结构和 react project 大致相同, 存在很多细节的区别，这是因为两者(vuex & redux)之间不同之处产生的，更详细请看demo实例。 
 	
