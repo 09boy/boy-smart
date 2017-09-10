@@ -32,19 +32,25 @@ class SmartInquire{
 	}
 
 	parseAnswer(answers) {
-		const { namesKey, nameValue, childrenData } = this._recordAction;
-		const value = answers[namesKey];
-		const childConfig = !nameValue ? this._configData[value][this._childQuestionIdentifier] : childrenData 
+		let { namesKey, nameValue, childrenData, precomandArg } = this._recordAction;
+		let value = answers[namesKey];
+		let childConfig = !nameValue ? this._configData[value][this._childQuestionIdentifier] : childrenData;
+		let _precomandArg = '';
+
+		if (childConfig && childConfig.precomand) {
+			_precomandArg = value + ',';
+			value = childConfig.precomand;
+		}
 
 		this.setRecord({nameValue: value});
 		let info;
 
 		if (childConfig) {
-			this.setRecord({prevCommand: value, prevArg: childConfig.arg, namesKey: childConfig.name, childrenData: childConfig[this._childQuestionIdentifier]});
+			this.setRecord({prevCommand: value, prevArg: childConfig.arg, precomandArg: _precomandArg, namesKey: childConfig.name, childrenData: childConfig[this._childQuestionIdentifier]});
 			return this.setQuerstions(childConfig);
 		} else {
-			info = this.getInfo(value);
-			Log.info('ending...', info);
+			info = this.getInfo(precomandArg + value);
+			// Log.info('ending...', info);
 		}
 
 		return new Promise((resolve, reject) => {

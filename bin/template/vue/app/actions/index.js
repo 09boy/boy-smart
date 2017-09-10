@@ -1,4 +1,4 @@
-import * as ActionTypes from './constants';
+import * as ActionTypes from '../constants';
 // root actions
 // import otherActions from 'other.file';
 

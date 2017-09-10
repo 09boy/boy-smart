@@ -64,7 +64,7 @@ const page = {
   },
 
 	react: (option) => {
-    const { name, uName } = option;
+    const { lName, uName } = option;
     return {
       index: [
         `import './style';`,
@@ -88,7 +88,7 @@ const page = {
         `import { createSelector } from 'reselect';\n`,
 
         '// write your code instead of the following code',
-        `const get${uName}State = state => state.${name};\n`,
+        `const get${uName}State = state => state.${lName};\n`,
 
         'export default createSelector(',
         `\tget${uName}State,`,
@@ -104,7 +104,7 @@ const page = {
       ].join('\n'),
 
       reducer: [
-        `const ${name} = (state = {}, action) => {`,
+        `const ${lName} = (state = {}, action) => {`,
         '\tswitch (action.type) {',
         `\t\t// write your code, here.`,
         `\t\t\t// case 'FETCH_DATA':`,
@@ -114,7 +114,7 @@ const page = {
         '\t}',
         '};\n',
 
-        `export default ${name};`
+        `export default ${lName};`
       ].join('\n'),
 
       actions: [
@@ -135,12 +135,12 @@ const page = {
   },
 
 	vue: (option) => {
-    const { name, uName } = option;
+    const { lName, uName } = option;
 
     return {
       index: [
         '<template>',
-        '\t<div class="page">',
+        '\t<div class="page-container">',
         `\t\t<h2>${uName} page is created.</h2>`,
         '\t</div>',
         '</template>',
@@ -181,7 +181,7 @@ const component = {
   },
 
 	react: (option) => {
-    const { name, uName } = option;
+    const { lName, uName } = option;
 
     return {
       index: [
@@ -205,12 +205,13 @@ const component = {
   },
 
 	vue: (option) => {
-    const { name, uName } = option;
+    const { lName, uName } = option;
 
     return {
       index: [
         '<template>',
         `\t<div class='${uName}_Component'>`,
+        `\t\t<h2>${uName} Component is created.</h2>`,
         '\t</div>',
         '</template>',
         '<script>',

@@ -12,17 +12,15 @@ const store = configureStore(history);
 
 // for testing
 const navs = [], routers = [];
-let count = 0;
-for (let page in RouterConfig) {
-	const { path, component } = RouterConfig[page];
-	navs.push(<li key={`${path}_${count}`}><Link to={`${path}`}>{page.toLocaleUpperCase()}</Link></li>);
-	if (page === 'home') {
-		routers.push(<Route key={`${page}`} exact path={path} component={component}/>);
+RouterConfig.map((route, index) => {
+	const { path, name, component } = route;
+	navs.push(<li key={`${path}_${index}`}><Link to={`${path}`}>{name.toLocaleUpperCase()}</Link></li>);
+	if (name === 'home') {
+		routers.push(<Route key={`${name}`} exact path={path} component={component}/>);
 	} else {
-		routers.push(<Route key={`${page}`} path={path} component={component}/>);
+		routers.push(<Route key={`${name}`} path={path} component={component}/>);
 	}
-	count++;
-}
+});
 
 export default () => (
 	<Provider store={store}>

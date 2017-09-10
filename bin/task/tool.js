@@ -6,7 +6,18 @@ const constant = require('../util/constant.js');
 const { ROOT_DIR, CONFIG_DIR, CHECK_INSTALL_FILES, PROJECT_TEMPLATE_DIR, UNKNOW_MODE } = constant;
 const { installPackage, page, component }  = require(`${PROJECT_TEMPLATE_DIR}`);
 
-const getDirectories = p => readdirSync(p).filter(f => statSync(`${p}/${f}`).isDirectory());
+const reactProject = require('./react.js');
+const vueProject = require('./vue.js');
+const normalProject = require('./normal.js');
+
+// const getDirectories = p => readdirSync(p).filter(f => statSync(`${p}/${f}`).isDirectory());
+
+const togglePageFolderNames = pageName => {
+	const lName = pageName.toLocaleLowerCase();
+	const firstLetter = pageName.substr(0, 1);
+	const uName = pageName.replace(firstLetter, firstLetter.toLocaleUpperCase());
+	return {lName, uName};
+};
 
 class Tool {
 	constructor(stRecord, constantConfig = constant) {
@@ -111,15 +122,11 @@ class Tool {
 		const tempDir = `${PROJECT_TEMPLATE_DIR}/${this._record.mode}`;
 		exec(`mkdir ${dirs}`);
 
-		exec(`touch ${basePath}/${structureData.components}/index.js`);
-
 		switch(this._record.mode) {
 			case 'normal':
-				// exec(`cp -r ${tempDir}/pages ${basePath}/${structureData.pages}`);
 				exec(`cp ${tempDir}/index.js ${basePath}/${structureData.pages}`);
 				exec(`cp ${tempDir}/app.js ${basePath}/${structureData.pages}`);
 				exec(`cp ${tempDir}/style.scss ${basePath}/${structureData.pages}`);
-				exec(`cp ${PROJECT_TEMPLATE_DIR}/index.template.html ${basePath}/${structureData.pages}`);
 				exec(`cp -r ${tempDir}/templates ${this._appRootPath}/${this._record.project_name}`);
 				break;
 			case 'react' :
@@ -132,9 +139,8 @@ class Tool {
 				exec(`cp -r ${tempDir}/demo ${basePath}/${structureData.pages}`);
 				exec(`cp ${tempDir}/pages/index.js ${basePath}/${structureData.pages}`);
 				exec(`cp ${tempDir}/pages/App.js ${basePath}/${structureData.pages}`);
-				exec(`cp ${tempDir}/pages/common.style.scss ${basePath}/${structureData.pages}`);
+				exec(`cp ${tempDir}/pages/style.scss ${basePath}/${structureData.pages}`);
 				exec(`cp ${tempDir}/pages/router.config.js ${basePath}/${structureData.pages}`);
-				exec(`cp ${PROJECT_TEMPLATE_DIR}/index.template.html ${basePath}/${structureData.pages}`);
 				exec(`cp ${tempDir}/connect.js ${basePath}/${structureData.utils}`);
 				break;
 			case 'vue':
@@ -151,10 +157,11 @@ class Tool {
 				if (structureData.app !== 'app') {
 					exec(`mv -r ${basePath}/app ${basePath}/${structureData.app}`);
 				}
-
-				exec(`cp ${PROJECT_TEMPLATE_DIR}/index.template.html ${basePath}/${structureData.pages}`);
 				break;
 		}
+
+		exec(`touch ${basePath}/${structureData.components}/index.js`);
+		exec(`cp ${PROJECT_TEMPLATE_DIR}/index.template.html ${basePath}/${structureData.pages}`);
 	}
 
 	initRecord(item = {}) {
@@ -192,301 +199,50 @@ class Tool {
 		// });
 	}
 
-	checkNormalExterTemplate(projectConfig, identifier = 'page') {
-		const hasExterTemplate = this.test(this._appRootPath + '/templates');
-		const hasPageTemplate = hasExterTemplate && this.test( `${this._appRootPath}/templates/${identifier}`);
-		const hasIndexJs = hasPageTemplate && (this.test( `${this._appRootPath}/templates/${identifier}/index.js`) || this.test( `${this._appRootPath}/templates/${identifier}/index.jsx`));
-		const isEnabledExterTemplate = projectConfig.enabled_external_template;
-		// const isNextAction = hasExterTemplate && isEnabledExterTemplate && hasPageTemplate;
-		if (hasPageTemplate && !hasIndexJs) {
-			Log.error('Eerror: Not fount index.js or index.jsx file in templates/page folder.');
-			return false;
-		}
-		return hasExterTemplate && isEnabledExterTemplate && hasPageTemplate;
+	normalPage(mode, pages, structureData, projectConfig, parentFolder) {
+		normalProject.page(this._appRootPath, mode, pages, structureData, projectConfig, page, Log, togglePageFolderNames, parentFolder);
 	}
 
-	normalPage(mode, pages, structureData, projectConfig) {
-		const isNextAction = this.checkNormalExterTemplate(projectConfig);
-
-		const pageRootPath = this._appRootPath + `/${structureData.base}/${structureData.pages}`;
-		const pageExportRootPath = pageRootPath + `/index.js`;
-
-		const createTemplate = (name, basePath) => {
-			if (isNextAction) {
-				exec(`cp -r ${this._appRootPath}/templates/page ${pageRootPath}`);
-				exec(`mv ${pageRootPath}/page  ${basePath}`);
-			} else {
-				execSync(`mkdir ${basePath}`);
-				exec(`touch ${basePath}/index.js ${basePath}/style.css`);
-			}
-		};
-
-		pages.map(pageName => {
-			const name = pageName.toLocaleLowerCase();
-			const firstLetter = name.substr(0, 1);
-			const uName = name.replace(firstLetter, firstLetter.toLocaleUpperCase());
-
-			const basePath = `${pageRootPath}/${name}`;
-			
-			if (this.test(basePath)) {
-				Log.error(`Error: '${name}' folder exist. not need to create the page.`);
-				return;
-			}
-			createTemplate(name, basePath);
-		});
+	reactPage(mode, pages, structureData, projectConfig, parentFolder) {
+		reactProject.page(this._appRootPath, mode, pages, structureData, page, Log, togglePageFolderNames, parentFolder);
 	}
 
-	reactPage(mode, pages, structureData) {
-		// react page
-		const pageModes = [];
-		const routerPath = this._appRootPath + `/${structureData.base}/${structureData.pages}/router.config.js`;
-		const routerLines = readFileSync(routerPath).toString().split('\n');
-		const coptyRouterLines = [...routerLines];
-		const reducerPath = this._appRootPath + `/${structureData.base}/${structureData.app.base}/${structureData.app.reducers}/index.js`;
-		const reducerLines = readFileSync(reducerPath).toString().split('\n');
-		const copyReducerLines = [...reducerLines];
-
-		const addReducer = (importStr, reducerStr) => {
-			let importEnd = false;
-			let isAddImport = false;
-			let importLinesCount = 0;
-			copyReducerLines.map((line, index) => {
-				if (importEnd && !isAddImport) {
-					reducerLines.splice(index, 0, ...importStr);
-					isAddImport = true;
-					importLinesCount = pages.length;
-				} else if (line.indexOf('const') > -1 && line.indexOf('rootReducer') > -1) {
-					reducerLines.splice(index + importLinesCount + 1, 0, ...reducerStr);
-				} 
-
-				importEnd = !importEnd ? line.indexOf('import') < 0 : true;
-			});
-
-			writeFileSync(reducerPath, reducerLines.join('\n'));
-		};
-
-		const addRouter = (importStr, routerStr) => {
-			let defaultHasImport = false;
-			let importEnd = false;
-			let isAddImport = false;
-			let importLinesCount = 0;
-			coptyRouterLines.map((line, index) => {
-				if (!defaultHasImport && line.indexOf('import') > -1) defaultHasImport = true;
-				if (defaultHasImport && importEnd && !isAddImport) {
-					routerLines.splice(index, 0, ...importStr);
-					isAddImport = true;
-					importLinesCount = pages.length;
-				} else if (line.indexOf('};') > -1) {
-					routerLines.splice(index + importLinesCount, 0, ...routerStr);
-				} 
-
-				importEnd = !importEnd ? line.indexOf('import') < 0 : true;
-			});
-
-			// need to fix for the first adding data
-			if (!defaultHasImport) {
-				routerLines.unshift(...importStr, '\n');
-			}
-
-			writeFileSync(routerPath, routerLines.join('\n'));
-		};
-
-		let importStr = [], reducerStr = [];
-		let importRouterStr = [], routerStr = [];
-		pages.map(pageName => {
-			const name = pageName.toLocaleLowerCase();
-			const firstLetter = name.substr(0, 1);
-			const uName = name.replace(firstLetter, firstLetter.toLocaleUpperCase());
-
-			const basePath = `${this._appRootPath}/${structureData.base}/${structureData.pages}/${name}`;
-			const reduxPath = `${basePath}/redux`;
-
-			// checking exist folder
-			// ...
-			if (this.test(basePath)) {
-				Log.error(`Error: '${name}' folder exist. not need to create the page.`);
-				return;
-			}
-
-			execSync(`mkdir ${basePath} ${reduxPath}`);
-			execSync(`touch ${basePath}/index.js ${basePath}/style.scss ${reduxPath}/actions.js ${reduxPath}/selector.js ${reduxPath}/reducer.js`);
-
-			// for reducer
-			importStr.push(`import ${name} from '../../${structureData.pages}/${name}/redux/reducer.js';`);
-			reducerStr.push(`\t${name},`);
-
-			// for router
-			// importRouterStr.push(`import ${uName}Page from 'async-loader?name=${name}!./${name}';`);
-			importRouterStr.push(`import ${uName}Page from './${name}';`);
-			routerStr.push(`\t${name}: {`, `\t\tpath: '/${name === 'home' ? '' : name}',`, `\t\tcomponent: ${uName}Page,`, '\t},');
-			pageModes.push({basePath, modes: page[mode]({name, uName})});
-			// console.log(pageName, name, uName);
-		});
-
-		pageModes.map(obj => {
-			// update contect
-			writeFileSync(obj.basePath + '/index.js', obj.modes.index);
-			writeFileSync(obj.basePath + '/redux/selector.js', obj.modes.selector);
-			writeFileSync(obj.basePath + '/redux/reducer.js', obj.modes.reducer);
-			writeFileSync(obj.basePath + '/redux/actions.js', obj.modes.actions);
-		});
-
-		// add reducer
-		addReducer(importStr, reducerStr);
-
-		// add router
-		addRouter(importRouterStr, routerStr);
-	}
-
-	vuePage(mode, pages, structureData) {
-		const pageModes = [];
-		const routerPath = this._appRootPath + `/${structureData.base}/${structureData.pages}/router.config.js`;
-		const routerLines = readFileSync(routerPath).toString().split('\n');
-		const coptyRouterLines = [...routerLines];
-		const privateModulePath = this._appRootPath + `/${structureData.base}/${structureData.app}/modules/private.modules.js`;
-		const privateModuleLines = readFileSync(privateModulePath).toString().split('\n');
-
-		const addPrivateModultToStore = (importStr) => {
-			writeFileSync(privateModulePath, privateModuleLines.join('\n'));
-		};
-
-		const addRouter = (importStr, routerStr) => {
-			let defaultHasImport = false;
-			let importEnd = false;
-			let isAddImport = false;
-			let importLinesCount = 0;
-			coptyRouterLines.map((line, index) => {
-				if (!defaultHasImport && line.indexOf('import') > -1) defaultHasImport = true;
-				if (defaultHasImport && importEnd && !isAddImport) {
-					routerLines.splice(index - 1, 0, ...importStr);
-					isAddImport = true;
-					importLinesCount = pages.length;
-				} else if (line.indexOf('];') > -1) {
-					routerLines.splice(index + importLinesCount, 0, ...routerStr);
-				} 
-
-				importEnd = !importEnd ? line.indexOf('import') < 0 : true;
-			});
-
-			// need to fix for the first adding data
-			if (!defaultHasImport) {
-				routerLines.unshift(...importStr, '\n');
-			}
-
-			writeFileSync(routerPath, routerLines.join('\n'));
-		};
-
-		let importRouterStr = [], routerStr = [];
-		pages.map(pageName => {
-			const name = pageName.toLocaleLowerCase();
-			const firstLetter = name.substr(0, 1);
-			const uName = name.replace(firstLetter, firstLetter.toLocaleUpperCase());
-
-			const basePath = `${this._appRootPath}/${structureData.base}/${structureData.pages}/${name}`;
-			const vuexPath = `${basePath}/vuex`;
-
-			// checking exist folder
-			// ...
-			if (this.test(basePath)) {
-				Log.error(`Error: '${name}' folder exist. not need to create the page.`);
-				return;
-			}
-
-			execSync(`mkdir ${basePath} ${vuexPath}`);
-			execSync(`touch ${vuexPath}/module.js`);
-
-			// for module export ModuleHome from 'pages/home/vuex/module';
-			privateModuleLines.push(`export Module${uName} from '../../${structureData.pages}/${name}/vuex/module.js';`);
-
-			// // for router
-			importRouterStr.push(`const ${uName}Page = () => import('./${name}');`);
-			// importRouterStr.push(`import ${uName}Page from './${name}';`);
-			routerStr.push(`\t{`, `\t\tpath: '/${name === 'home' ? '' : name}',`, `\t\tname: '${name}',`, `\t\tcomponent: ${uName}Page,`, '\t},');
-			pageModes.push({basePath, modes: page[mode]({name, uName})});
-		});
-
-		pageModes.map(obj => {
-			// update contect
-			writeFileSync(obj.basePath + '/index.vue', obj.modes.index);
-			writeFileSync(obj.basePath + '/vuex/module.js', obj.modes.localModule);
-		});
-
-		// add router
-		addRouter(importRouterStr, routerStr);
-
-		// add module
-		addPrivateModultToStore();
+	vuePage(mode, pages, structureData, projectConfig, parentFolder) {
+		vueProject.page(this._appRootPath, mode, pages, structureData, page, Log, togglePageFolderNames, parentFolder);
 	}
 
 	createPage(option, projectConfig) {
 		const { mode, pages } = option;
-
 		Log.process('Starting to create page...');
 		this[mode + 'Page'](mode, pages, projectConfig.dev_structure_dir, projectConfig);
 		Log.process('Creating page is completed.');
 	}
 
-	normalComponent(mode, components, structureData) {
-
-	}
-
-	reactComponent(mode, components, structureData) {
-		const componentRootPath = this._appRootPath + `/${structureData.base}/${structureData.components}`;
-		const componentExportRootPath = componentRootPath + `/index.js`;
-
-		const createTemplate = (obj) => {
-			execSync(`mkdir ${obj.basePath}`);
-			writeFileSync(obj.basePath + '/index.js', obj.modes.index);
-			writeFileSync(obj.basePath + '/style.scss', obj.modes.style);
+	createChildPage(option, projectConfig) {
+		const { mode, pages, parentFolder } = option;
+		const parentFolderNames = togglePageFolderNames(parentFolder);
+		const structureData = projectConfig.dev_structure_dir;
+		const basePath = `${this._appRootPath}/${structureData.base}/${structureData.pages}/${parentFolderNames.lName}`;
+		if (!this.test(basePath)) {
+			Log.error(`Error: parent folder that name is '${parentFolder}' not exist. create failed!`);
+			return;
 		}
 
-		components.map(componentName => {
-			const name = componentName.toLocaleLowerCase();
-			const firstLetter = name.substr(0, 1);
-			const uName = name.replace(firstLetter, firstLetter.toLocaleUpperCase());
-
-			const basePath = `${componentRootPath}/${name}`;
-			
-			if (this.test(basePath)) {
-				Log.error(`Error: '${name}' folder exist. not need to create the component.`);
-				return;
-			}
-			createTemplate({basePath, modes: component[mode]({name, uName})});
-		});
-		
-		const dirs = getDirectories(componentRootPath);
-		const refModes = dirs.map(name => {
-			const firstLetter = name.substr(0, 1);
-			const uName = name.replace(firstLetter, firstLetter.toLocaleUpperCase());
-			return `export ${uName} from './${name}';`;
-		}).join('\n');
-
-		writeFileSync(componentExportRootPath, refModes);
+		Log.process('Starting to create child page...');
+		this[mode + 'Page'](mode, pages, projectConfig.dev_structure_dir, projectConfig, parentFolder);
+		Log.process('Creating child page is completed.');
 	}
 
-	vueComponent(mode, components, structureData) {
-		const componentRootPath = this._appRootPath + `/${structureData.base}/${structureData.components}`;
-		const componentExportRootPath = componentRootPath + `/index.js`;
-		const componentExportLines = readFileSync(componentExportRootPath).toString().split('\n');
+	normalComponent(mode, components, structureData, projectConfig) {
+		normalProject.component(this._appRootPath, mode, components, structureData, projectConfig, component, Log, togglePageFolderNames);
+	}
 
-		components.map(componentName => {
-			const name = componentName.toLocaleLowerCase();
-			const firstLetter = name.substr(0, 1);
-			const uName = name.replace(firstLetter, firstLetter.toLocaleUpperCase());
+	reactComponent(mode, components, structureData, projectConfig) {
+		reactProject.component(this._appRootPath, mode, components, structureData, component, Log, togglePageFolderNames);
+	}
 
-			const basePath = `${componentRootPath}/${name}`;
-			
-			if (this.test(basePath)) {
-				Log.error(`Error: '${name}' folder exist. not need to create the component.`);
-				return;
-			}
-
-			execSync(`mkdir ${basePath}`);
-			writeFileSync(basePath + '/index.vue', component[mode]({name, uName}).index);
-			componentExportLines.push(`export ${uName} from './${name}';`);			
-		});
-
-		writeFileSync(componentExportRootPath, componentExportLines.join('\n'));
+	vueComponent(mode, components, structureData, projectConfig) {
+		vueProject.component(this._appRootPath, mode, components, structureData, component, Log, togglePageFolderNames);
 	}
 
 	createComponent(option, projectConfig) {

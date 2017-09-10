@@ -1,4 +1,2 @@
-const RouterConfig = {
-};
-
-export default RouterConfig;
+export default [
+];

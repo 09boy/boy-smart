@@ -23,11 +23,11 @@ const parseCliData = (configData) => {
 	const { init, install, create, server, start, build, page, component, upgrade, del } = configData.Commands;
 	const recordItem = record.getRecordItem(process.cwd());
 	if (!recordItem) { // new app
-		data = {init, create, upgrade, del};
+		data = {init, create, del, upgrade};
 	} else if (recordItem.action === 'init') { //get last action name
 		data = {install, start, upgrade};
 	} else {
-		data = {server, start, build, page, component, upgrade};
+		data = {start, build, server, page, 'page-child': configData.Commands['page-child'], component, upgrade};
 	}
 	return Object.assign({}, configData, {Commands: data});
 };

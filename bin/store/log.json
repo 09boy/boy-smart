@@ -147,10 +147,28 @@
       }
     }
   },
+  "/Users/qinmin/Person/test/smart-framework/work/test-react": {
+    "status": "Press Control-C to exit | BeforeExit.",
+    "project_name": "test-react",
+    "mode": "react",
+    "action": "page"
+  },
+  "/Users/qinmin/Person/test/smart-framework/work/test-normal": {
+    "status": "Press Control-C to exit | BeforeExit.",
+    "project_name": "test-normal",
+    "mode": "normal",
+    "action": "start"
+  },
   "/Users/qinmin/Person/test/smart-framework/work/test-vue": {
-    "status": "start",
+    "status": "Press Control-C to exit | BeforeExit.",
     "project_name": "test-vue",
     "mode": "vue",
+    "action": "page"
+  },
+  "/Users/qinmin/Person/test/smart-framework/work/react-project-demo": {
+    "status": "Press Control-C to exit | BeforeExit.",
+    "project_name": "react-project-demo",
+    "mode": "react",
     "action": "start"
   }
 }

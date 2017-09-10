@@ -23,7 +23,7 @@ class Task {
 			Log.info(`**** It is taken your ${new Date().getTime() - beginTime}ms to build code. ****`);
 		}
 		// Add shutdown logic here;
-	  Log.info('Received SIGINT.  Press Control-C to exit.');
+	  // Log.info('Received SIGINT.  Press Control-C to exit.');
 	  if (this.__httpServer) this.__httpServer.close();
 	  this.record.modifyRecordItem({status: 'Press Control-C to exit | BeforeExit.'});
 	  process.exitCode = 1;
@@ -64,7 +64,12 @@ class Task {
 	}
 
 	page(cliData, projectConfig) {
-		this.tool.createPage({pages: cliData.args, mode: cliData.options.mode || this.tool.record.mode || 'normal'}, projectConfig);
+		if (!cliData.actionType) {
+			this.tool.createPage({pages: cliData.args, mode: cliData.options.mode || this.tool.record.mode || 'normal'}, projectConfig);
+		} else { // create child page
+			const parentFolder = cliData.args.shift();
+			this.tool.createChildPage({pages: cliData.args, parentFolder, mode: cliData.options.mode || this.tool.record.mode || 'normal'}, projectConfig);
+		}	
 	}
 
 	component(cliData, projectConfig) {
@@ -94,14 +99,14 @@ class Task {
 		
 		const targetRecordItem = this.record.getRecordItem(APP_ROOT_DIR);
 		if (targetRecordItem && targetRecordItem.status !== action) {
-			Log.error('Modify record');
+			// Log.error('Modify record');
 			this.record.modifyRecordItem({status: action, action: action});
 		}/* else if (this.tool.isExistInstallFile && !targetRecordItem) {
 			Log.error('Error: Installation files is invalid. 😄. you can use CLI to create, rather than to copy.');
 			return;
 		}*/
-
-		console.log('action:: ', action)
+		
+		// console.log('action:: ', action)
 		this[action](cliData, projectConfig);
 	}
 }

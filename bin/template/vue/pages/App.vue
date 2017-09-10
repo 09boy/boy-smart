@@ -23,33 +23,58 @@
     }
   }
 </script>
-<style>
+<style lang='scss'>
   html,
   body,
-  div,
-  ul,
-  li {
+  #app,
+  .app-container,
+  .page-container {
+    width: 100%;
+    height: 100%;
+  }
+
+  body, ul, {
     margin: 0;
     padding: 0;
   }
 
-  body {
-   font-family: Helvetica, sans-serif;
+  .page-container {
+    position: relative;
+    h2 {
+      position: absolute;
+      color: #f44336;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      height: 30px;
+      text-align: center;
+    }
   }
 
-  a {
-    text-decoration: none;
-  }
+  .app-container> ul {
+    a {
+      text-decoration: none;
+      color: #333;
+    }
 
-  li {
-    list-style: none;
-  }
+    a:hover {
+      color: #d8850b;
+    }
 
-  .page {
+    li {
+      display: inline-block;
+      margin: 0 10px;
+    }
+
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 60px;
-    bottom: 0;
+    height: 60px;
+    line-height: 60px;
+    width: 100%;
+    top: 0;
+    z-index: 1;
+    text-align: center;
+    box-shadow: 0 2px 2px -2px rgba(0, 0, 0, .15);
   }
 </style>
