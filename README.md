@@ -317,15 +317,15 @@ project dir 					项目目录
 
 
 | 属性 | 属性值 | 说明 |
----|---|---|---
+---|---|---
 | path | /api/login | 请求的 api 地址 |
 | method| get, post, delete, ...| 任何express合法的请求方式 |
 | data | 响应数据 response  | 1. {per_page: 1, total: 10, data: [...items]}<br>2. 可以用mockjs模拟 |
 | filename | .js 文件 | 1. 用 module.exports 语法导出你的响应数据;<br>2. 如果存在 fielname 将忽略 data属性;<br>3.  如果懒惰用mockjs模拟复杂的数据机构并且有现成的结构数据可供拷贝，你可以直接保存到一个js文件中并导出
 | proxyOption | 依赖 http-proxy-middleware node插件 | 1. 参考地址 [http-proxy-middleware](github.com/chimurai/http-proxy-middleware);<br>2. 如果存在将忽略**path**属性以外的所有属性|
 
-````
 
+````
 // 三种方式
 [
 	{ // 使用 mokejs 用data属性或者自定义数据
