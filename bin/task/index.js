@@ -84,8 +84,9 @@ class Task {
 	}
 
 	upgrade() {
-		// cd(ROOT_DIR);
+		Log.process(`smart is upgrading`);
 		exec(`cd ${ROOT_DIR} && git pull origin master`);
+		Log.process(`smart is upgraded successfully.`);
 	}
 
 	action(cliData, projectConfig) {
