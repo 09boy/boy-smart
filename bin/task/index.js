@@ -84,6 +84,7 @@ class Task {
 	}
 
 	upgrade() {
+		// cd(ROOT_DIR);
 		exec(`cd ${ROOT_DIR} && git pull origin master`);
 	}
 

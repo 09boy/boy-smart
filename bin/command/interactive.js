@@ -42,6 +42,8 @@ class SmartInquire{
 			value = childConfig.precomand;
 		}
 
+		precomandArg = precomandArg || '';
+
 		this.setRecord({nameValue: value});
 		let info;
 
@@ -50,7 +52,7 @@ class SmartInquire{
 			return this.setQuerstions(childConfig);
 		} else {
 			info = this.getInfo(precomandArg + value);
-			// Log.info('ending...', info);
+			// Log.info('ending...', info, precomandArg);
 		}
 
 		return new Promise((resolve, reject) => {
