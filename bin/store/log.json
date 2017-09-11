@@ -170,5 +170,17 @@
     "project_name": "react-project-demo",
     "mode": "react",
     "action": "start"
+  },
+  "/Users/qinmin/Person/test/smart-framework/work/vue-project-demo": {
+    "status": "Press Control-C to exit | BeforeExit.",
+    "project_name": "vue-project-demo",
+    "mode": "vue",
+    "action": "start"
+  },
+  "/Users/qinmin/Person/te/normal-project-demo": {
+    "status": "Press Control-C to exit | BeforeExit.",
+    "project_name": "normal-project-demo",
+    "mode": "normal",
+    "action": "start"
   }
 }

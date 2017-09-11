@@ -70,7 +70,7 @@ module.exports = {
 			execSync(`mkdir ${basePath} ${vuexPath}`);
 			execSync(`touch ${vuexPath}/module.js`);
 
-			privateModuleLines.push(`export Module${uName} from '../../${relativePagePath}/${lName}/vuex/module.js';`);
+			privateModuleLines.push(`export Module${uName} from '../../${structureData.pages}${rootPagePath}/${lName}/vuex/module.js';`);
 
 			// for router
 			importRouterStr.push(`const ${uName}Page = () => import('.${rootPagePath}/${lName}');`);

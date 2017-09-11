@@ -215,8 +215,9 @@ project dir 					项目目录
 
   不像 react 和 vue 项目都有现成的 loader 去处理， 所以对于普通项目来说，你可以先去[webpack官网](https://webpack.js.org/api/hot-module-replacement/), 了解下相应的知识，这对你理解很有帮助。<br> 其实对于任何文件都可以做到HMR。<br>时间宽裕可以研究再写一个普通项目的HMR插件。<br>下面是smart 创建的normal 项目，用backbone和jquery做了一个SPA 例子，实现了HMR，和页面代码拆封，但没有实现按需加载(通过路由侦听路由实现即可)，下面是地址：
 	
-[normal-project-demo]()
+[normal-project-demo](https://github.com/09boy/smart-project-demos/tree/master/normal-project-demo)
 
+返回demo地址上一级，查看使用帮助。
 
 ### React Project
 
@@ -282,8 +283,9 @@ project dir 					项目目录
 	
 - 创建组件也一样，会自动绑定到组件入口文件，你不用手动去管理，写完代码在别的地方直接引用即可。
 	
-	[react-project-demo]()
+	[react-project-demo](https://github.com/09boy/smart-project-demos/tree/master/react-project-demo)
 
+	返回demo地址上一级，查看使用帮助。
 
 ### Vue Porject
 	
@@ -299,9 +301,11 @@ project dir 					项目目录
 	
 	
 ...更多细节有时间补充上
+
 	
-	
-[vue-project-demo]()
+[vue-project-demo](https://github.com/09boy/smart-project-demos/tree/master/vue-project-demo) 
+
+返回demo地址上一级，查看使用帮助。
 	
 ## MOCK 和 PROXY
 > 可通过 mock.js 文件配置

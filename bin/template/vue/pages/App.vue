@@ -39,6 +39,10 @@
     padding: 0;
   }
 
+  h2 {
+    font-weight: normal;
+  }
+  
   .page-container {
     position: relative;
     h2 {
@@ -52,30 +56,5 @@
       height: 30px;
       text-align: center;
     }
-  }
-
-  .app-container> ul {
-    a {
-      text-decoration: none;
-      color: #333;
-    }
-
-    a:hover {
-      color: #d8850b;
-    }
-
-    li {
-      display: inline-block;
-      margin: 0 10px;
-    }
-
-    position: absolute;
-    height: 60px;
-    line-height: 60px;
-    width: 100%;
-    top: 0;
-    z-index: 1;
-    text-align: center;
-    box-shadow: 0 2px 2px -2px rgba(0, 0, 0, .15);
   }
 </style>
