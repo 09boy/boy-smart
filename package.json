@@ -1,6 +1,6 @@
 {
   "name": "boy-smart",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "smart; front-end: webpack development tool;",
   "bin": {
     "smart": "./bin/index.js"
@@ -97,9 +97,7 @@
     "yamljs": "^0.3.0"
   },
   "homepage": "https://github.com/09boy/boy-smart",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/09boy/boy-smart.git"
-  },
-  "bugs": "https://github.com/09boy/boy-smart/issues"
+  "repository": "https://github.com/09boy/boy-smart.git",
+  "bugs": "https://github.com/09boy/boy-smart/issues",
+  "main": "index.js"
 }

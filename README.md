@@ -61,6 +61,10 @@
 3. yarn（稍后发布）
 
 	> 稍后提供 yarn
+	
+	````
+	yarn add boy-smart
+	````
 
 ## 支持的项目模式
 - normal
